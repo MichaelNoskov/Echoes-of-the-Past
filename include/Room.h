@@ -6,7 +6,9 @@
 
 class Room {
 private:
-    Texture2D background;
+    Texture2D textureWallTop;
+    Texture2D textureWallDown;
+    Texture2D textureFloor;
 
 public:
     Room(const std::string& configPath = "res/config.json");

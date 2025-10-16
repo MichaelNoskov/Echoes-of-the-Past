@@ -1,6 +1,27 @@
 {
-  "backgrounds": [
-    "res/textures/background/1.png",
-    "res/textures/background/2.jpg"
-  ]
+    "backgrounds": {
+        "wall_top": [
+            "res/textures/background/wall_top/1.png",
+            "res/textures/background/wall_top/2.png",
+            "res/textures/background/wall_top/3.png",
+            "res/textures/background/wall_top/4.png",
+            "res/textures/background/wall_top/5.png",
+            "res/textures/background/wall_top/6.png"
+        ],
+        "wall_down": [
+            "res/textures/background/wall_down/1.png",
+            "res/textures/background/wall_down/2.png",
+            "res/textures/background/wall_down/3.png",
+            "res/textures/background/wall_down/4.png",
+            "res/textures/background/wall_down/5.png",
+            "res/textures/background/wall_down/6.png"
+        ],
+        "floor": [
+            "res/textures/background/floor/1.png",
+            "res/textures/background/floor/2.png",
+            "res/textures/background/floor/3.png",
+            "res/textures/background/floor/4.png",
+            "res/textures/background/floor/5.png"
+        ]
+    }
 }
