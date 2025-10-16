@@ -2,11 +2,17 @@
 #include "Room.h"
 
 int main() {
-    InitWindow(800, 600, "Game with Random Room Background");
+    int windowHeight = 600;
+    int windowWidth = 800;
+    InitWindow(windowWidth, windowHeight, "Game with Random Room Background");
 
-    Room room;
+    SetTargetFPS(60);
+
+    Room room(windowWidth*3, windowHeight);
 
     while (!WindowShouldClose()) {
+        room.Update();
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
