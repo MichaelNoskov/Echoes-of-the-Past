@@ -14,6 +14,7 @@ private:
     Camera2D camera;
     float cameraSensitivity;
     float cameraSmoothness;
+    bool texturesTiled = false;
 
 public:
     Room(float sceneWidth = 2000.0f, float sceneHeigth = 1000.0f, const std::string& configPath = "res/config.json");

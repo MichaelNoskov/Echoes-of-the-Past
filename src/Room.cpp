@@ -8,6 +8,7 @@
 #include <cstdlib>
 
 using json = nlohmann::json;
+
 Room::Room(float sceneWidth, float sceneHeigth, const std::string& configPath) {
     width = sceneWidth;
     heigth = sceneHeigth;
@@ -73,7 +74,6 @@ void Room::Update() {
 
     float targetCameraX = camera.target.x + mouseOffsetX * cameraSensitivity * 200;
 
-
     float cameraWidth = GetScreenWidth() / camera.zoom;
     float minCameraX = 0;
     float maxCameraX = width - cameraWidth;
@@ -91,23 +91,54 @@ void Room::Draw() {
     float percentFloor = 0.15f;
     float percentWallTop = 1.0f - percentWallDown - percentFloor;
 
-    Vector2 origin = { 0.0f, 0.0f };
-
     float heightWallTop = heigth * percentWallTop;
     float heightWallDown = heigth * percentWallDown;
     float heightFloor = heigth * percentFloor;
 
-    Rectangle sourceRecTop = { 0.0f, 0.0f, (float)textureWallTop.width, (float)textureWallTop.height };
-    Rectangle destRecTop = { 0.0f, 0.0f, width, heightWallTop };
-    DrawTexturePro(textureWallTop, sourceRecTop, destRecTop, origin, 0.0f, WHITE);
+    struct TextureData {
+        Texture2D& texture;
+        float height;
+        float yPosition;
+    };
 
-    Rectangle sourceRecDown = { 0.0f, 0.0f, (float)textureWallDown.width, (float)textureWallDown.height };
-    Rectangle destRecDown = { 0.0f, heightWallTop, width, heightWallDown };
-    DrawTexturePro(textureWallDown, sourceRecDown, destRecDown, origin, 0.0f, WHITE);
+    TextureData textures[] = {
+        {textureWallTop, heightWallTop, 0},
+        {textureWallDown, heightWallDown, heightWallTop},
+        {textureFloor, heightFloor, heightWallTop + heightWallDown}
+    };
 
-    Rectangle sourceRecFloor = { 0.0f, 0.0f, (float)textureFloor.width, (float)textureFloor.height };
-    Rectangle destRecFloor = { 0.0f, heightWallTop + heightWallDown, width, heightFloor };
-    DrawTexturePro(textureFloor, sourceRecFloor, destRecFloor, origin, 0.0f, WHITE);
+    float tileWidths[3];
+    float scales[3];
+    
+    for (int j = 0; j < 3; j++) {
+        scales[j] = textures[j].height / textures[j].texture.height;
+        tileWidths[j] = textures[j].texture.width * scales[j];
+    }
+
+    float minTileWidth = std::min(std::min(tileWidths[0], tileWidths[1]), tileWidths[2]);
+    int maxTiles = (int)ceil(width / minTileWidth);
+
+    for (int i = 0; i <= maxTiles; i++) {
+        for (int j = 0; j < 3; j++) {
+            float x = i * tileWidths[j];
+            if (x < width) {
+                float currentDestWidth = (x + tileWidths[j] > width) ? width - x : tileWidths[j];
+                float sourceWidthRatio = currentDestWidth / tileWidths[j];
+                float currentSourceWidth = textures[j].texture.width * sourceWidthRatio;
+                
+                Rectangle sourceRec;
+                Rectangle destRec = {x, textures[j].yPosition, currentDestWidth, textures[j].height};
+
+                if (i % 2 == 1) {
+                    sourceRec = {(float)textures[j].texture.width, 0, -currentSourceWidth, (float)textures[j].texture.height};
+                } else {
+                    sourceRec = {0, 0, currentSourceWidth, (float)textures[j].texture.height};
+                }
+                
+                DrawTexturePro(textures[j].texture, sourceRec, destRec, {0,0}, 0.0f, WHITE);
+            }
+        }
+    }
 
     EndMode2D();
 }
