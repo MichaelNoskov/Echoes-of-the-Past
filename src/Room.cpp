@@ -9,9 +9,9 @@
 
 using json = nlohmann::json;
 
-Room::Room(float sceneWidth, float sceneHeigth, const std::string& configPath) {
+Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath) {
     width = sceneWidth;
-    heigth = sceneHeigth;
+    height = sceneHeight;
 
     camera = { 0 };
     camera.target = { width / 2.0f, 0 };
@@ -61,6 +61,67 @@ Room::~Room() {
     UnloadTexture(textureFloor);
 }
 
+void Room::AddFurniture(std::unique_ptr<Furniture> furniture) {
+    furnitureList.push_back(std::move(furniture));
+}
+
+bool Room::RemoveFurniture(const std::string& name) {
+    auto it = std::find_if(furnitureList.begin(), furnitureList.end(),
+        [&name](const std::unique_ptr<Furniture>& furniture) {
+            return furniture->GetName() == name;
+        });
+    
+    if (it != furnitureList.end()) {
+        furnitureList.erase(it);
+        return true;
+    }
+    return false;
+}
+
+bool Room::RemoveFurniture(int index) {
+    if (index >= 0 && index < static_cast<int>(furnitureList.size())) {
+        furnitureList.erase(furnitureList.begin() + index);
+        return true;
+    }
+    return false;
+}
+
+
+void Room::ClearAllFurniture() {
+    furnitureList.clear();
+}
+
+Furniture* Room::GetFurniture(const std::string& name) {
+    auto it = std::find_if(furnitureList.begin(), furnitureList.end(),
+        [&name](const std::unique_ptr<Furniture>& furniture) {
+            return furniture->GetName() == name;
+        });
+    
+    return (it != furnitureList.end()) ? it->get() : nullptr;
+}
+
+Furniture* Room::GetFurniture(int index) {
+    if (index >= 0 && index < static_cast<int>(furnitureList.size())) {
+        return furnitureList[index].get();
+    }
+    return nullptr;
+}
+
+void Room::MoveFurniture(const std::string& name, float newX, float newY) {
+    Furniture* furniture = GetFurniture(name);
+    if (furniture) {
+        furniture->SetPosition(newX, newY);
+    }
+}
+
+std::vector<std::string> Room::GetFurnitureNames() const {
+    std::vector<std::string> names;
+    for (const auto& furniture : furnitureList) {
+        names.push_back(furniture->GetName());
+    }
+    return names;
+}
+
 void Room::Update() {
     Vector2 mousePosition = GetMousePosition();
     float centerX = GetScreenWidth() / 2.0f;
@@ -91,9 +152,9 @@ void Room::Draw() {
     float percentFloor = 0.15f;
     float percentWallTop = 1.0f - percentWallDown - percentFloor;
 
-    float heightWallTop = heigth * percentWallTop;
-    float heightWallDown = heigth * percentWallDown;
-    float heightFloor = heigth * percentFloor;
+    float heightWallTop = height * percentWallTop;
+    float heightWallDown = height * percentWallDown;
+    float heightFloor = height * percentFloor;
 
     struct TextureData {
         Texture2D& texture;
@@ -138,6 +199,10 @@ void Room::Draw() {
                 DrawTexturePro(textures[j].texture, sourceRec, destRec, {0,0}, 0.0f, WHITE);
             }
         }
+    }
+
+    for (const auto& furniture : furnitureList) {
+        furniture->Draw();
     }
 
     EndMode2D();
