@@ -31,5 +31,18 @@ void Furniture::Draw() {
 }
 
 Rectangle Furniture::GetBoundingBox() const {
-    return {posX, posY, width, height};
+    return {posX, posY - height, width, height};
+}
+
+BoundingBox Furniture::GetBoundingBox3D() const {
+    BoundingBox box;
+    box.min = { posX, posY - height, -0.1f };
+    box.max = { posX + width, posY, 0.1f };
+    return box;
+}
+
+bool Furniture::IsPointInside(float x, float y) const {
+    Rectangle bbox = GetBoundingBox();
+    return x >= bbox.x && x <= bbox.x + bbox.width && 
+           y >= bbox.y && y <= bbox.y + bbox.height;
 }

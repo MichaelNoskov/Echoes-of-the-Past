@@ -22,6 +22,8 @@ public:
     Vector2 GetPosition() const { return {posX, posY}; }
     std::string GetName() const { return name; }
     Rectangle GetBoundingBox() const;
+    BoundingBox GetBoundingBox3D() const;
+    bool IsPointInside(float x, float y) const;
 };
 
 #endif

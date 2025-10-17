@@ -20,6 +20,8 @@ private:
     bool texturesTiled = false;
     
     std::vector<std::unique_ptr<Furniture>> furnitureList;
+    Furniture* hoveredFurniture;
+    Font font;
 
 public:
     Room(float sceneWidth = 2000.0f, float sceneHeight = 1000.0f, const std::string& configPath = "res/config.json");
@@ -38,6 +40,9 @@ public:
     Furniture* GetFurniture(int index);
     void MoveFurniture(const std::string& name, float newX, float newY);
     std::vector<std::string> GetFurnitureNames() const;
+
+private:
+    Furniture* GetFurnitureAtMousePosition();
 };
 
 #endif

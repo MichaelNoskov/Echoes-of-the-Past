@@ -53,6 +53,9 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath) {
     textureWallTop = LoadTexture(selectedWallTop.c_str());
     textureWallDown = LoadTexture(selectedWallDown.c_str());
     textureFloor = LoadTexture(selectedFloor.c_str());
+
+    font = GetFontDefault();
+    hoveredFurniture = nullptr;
 }
 
 Room::~Room() {
@@ -122,6 +125,22 @@ std::vector<std::string> Room::GetFurnitureNames() const {
     return names;
 }
 
+Furniture* Room::GetFurnitureAtMousePosition() {
+    Vector2 mousePosition = GetMousePosition();
+
+    Vector2 worldPos = GetScreenToWorld2D(mousePosition, camera);
+
+    for (const auto& furniture : furnitureList) {
+        Rectangle bbox = furniture->GetBoundingBox();
+
+        if (CheckCollisionPointRec(worldPos, bbox)) {
+            return furniture.get();
+        }
+    }
+
+    return nullptr;
+}
+
 void Room::Update() {
     Vector2 mousePosition = GetMousePosition();
     float centerX = GetScreenWidth() / 2.0f;
@@ -143,6 +162,8 @@ void Room::Update() {
     if (targetCameraX > maxCameraX) targetCameraX = maxCameraX;
 
     camera.target.x += (targetCameraX - camera.target.x) * cameraSmoothness;
+
+    hoveredFurniture = GetFurnitureAtMousePosition();
 }
 
 void Room::Draw() {
@@ -206,4 +227,27 @@ void Room::Draw() {
     }
 
     EndMode2D();
+
+    if (hoveredFurniture != nullptr) {
+        Vector2 mousePos = GetMousePosition();
+        std::string name = hoveredFurniture->GetName();
+
+        int fontSize = 20;
+        int padding = 8;
+        Vector2 textSize = MeasureTextEx(font, name.c_str(), fontSize, 1);
+
+        Rectangle bgRect = {
+            mousePos.x - padding,
+            mousePos.y - textSize.y - padding - 5,
+            textSize.x + padding * 2,
+            textSize.y + padding * 2
+        };
+        
+        DrawRectangleRec(bgRect, Fade(BLACK, 0.7f));
+        DrawRectangleLinesEx(bgRect, 1, WHITE);
+
+        DrawTextEx(font, name.c_str(), 
+                  {mousePos.x - textSize.x/2, mousePos.y - textSize.y - padding - 5}, 
+                  fontSize, 1, WHITE);
+    }
 }
