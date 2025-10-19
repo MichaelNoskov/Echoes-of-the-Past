@@ -15,7 +15,7 @@ public:
     Drawable(const std::string& texturePath);
     ~Drawable();
 
-    void Draw(float x, float y);
+    void Draw(float x, float y, float scale = 1.0f);
 };
 
 #endif

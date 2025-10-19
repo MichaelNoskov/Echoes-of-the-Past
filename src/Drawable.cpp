@@ -25,8 +25,10 @@ Drawable::~Drawable() {
     UnloadTexture(texture);
 }
 
-void Drawable::Draw(float x, float y) {
-    Rectangle destRec = {x, y - height, width, height};
+void Drawable::Draw(float x, float y, float scale) {
+    float transformedWidth = scale * width;
+    float transformedHeight = scale * height;
+    Rectangle destRec = {x, y - transformedHeight, transformedWidth, transformedHeight};
     Rectangle sourceRec = {0, 0, (float)texture.width, (float)texture.height};
     Vector2 origin = {0, 0};
 
