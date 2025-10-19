@@ -10,10 +10,6 @@ Furniture::Furniture(
     float y,
     const std::string& furnitureName
 ) : surface(texturePath, width, height), posX(x), posY(y), name(furnitureName) {
-    surface = Drawable(texturePath, width, height);
-    posX = x;
-    posY = y;
-    name = furnitureName;
 }
 
 Furniture::~Furniture() {

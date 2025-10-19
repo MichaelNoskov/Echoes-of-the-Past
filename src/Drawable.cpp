@@ -1,5 +1,7 @@
 #include "Drawable.h"
 #include <string>
+#include <fstream>
+#include <iostream>
 
 Drawable::Drawable(const std::string& texturePath) {
     texture = LoadTexture(texturePath.c_str());
@@ -9,8 +11,8 @@ Drawable::Drawable(const std::string& texturePath) {
 
 Drawable::Drawable(const std::string& texturePath, float width, float height) {
     texture = LoadTexture(texturePath.c_str());
-    width = width;
-    height = height;
+    this->width = width;
+    this->height = height;
 }
 
 Drawable::~Drawable() {
@@ -30,4 +32,3 @@ void Drawable::Draw(float x, float y) {
 Rectangle Drawable::GetBoundingBox(float x, float y) const {
     return {x, y - height * scale, width * scale, height * scale};
 }
-
