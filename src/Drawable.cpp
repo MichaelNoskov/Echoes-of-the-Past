@@ -1,7 +1,5 @@
 #include "Drawable.h"
 #include <string>
-#include <fstream>
-#include <iostream>
 
 Drawable::Drawable(const std::string& texturePath) {
     texture = LoadTexture(texturePath.c_str());
