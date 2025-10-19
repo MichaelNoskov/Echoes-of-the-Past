@@ -1,19 +1,5 @@
 #include "Drawable.h"
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <random>
 #include <string>
-#include <nlohmann/json.hpp>
-#include <cstdlib>
-
-using json = nlohmann::json;
-
-Drawable::Drawable(const std::string& texturePath, float width, float height) {
-    texture = LoadTexture(texturePath.c_str());
-    width = width;
-    height = height;
-}
 
 Drawable::Drawable(const std::string& texturePath) {
     texture = LoadTexture(texturePath.c_str());
@@ -21,11 +7,17 @@ Drawable::Drawable(const std::string& texturePath) {
     height = texture.height;
 }
 
+Drawable::Drawable(const std::string& texturePath, float width, float height) {
+    texture = LoadTexture(texturePath.c_str());
+    width = width;
+    height = height;
+}
+
 Drawable::~Drawable() {
     UnloadTexture(texture);
 }
 
-void Drawable::Draw(float x, float y, float scale) {
+void Drawable::Draw(float x, float y) {
     float transformedWidth = scale * width;
     float transformedHeight = scale * height;
     Rectangle destRec = {x, y - transformedHeight, transformedWidth, transformedHeight};
@@ -34,3 +26,8 @@ void Drawable::Draw(float x, float y, float scale) {
 
     DrawTexturePro(texture, sourceRec, destRec, origin, 0.0f, WHITE);
 }
+
+Rectangle Drawable::GetBoundingBox(float x, float y) const {
+    return {x, y - height * scale, width * scale, height * scale};
+}
+

@@ -2,19 +2,20 @@
 #define FURNITURE_H
 
 #include "raylib.h"
+#include "Drawable.h"
 #include <string>
 
 class Furniture {
 private:
-    float width;
-    float height;
     float posX;
     float posY;
-    Texture2D texture;
+
+    Drawable surface;
+
     std::string name;
 
 public:
-    Furniture(const std::string& texturePath, float fWidth = 10.0f, float fHeight = 10.0f, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "");
+    Furniture(const std::string& texturePath, float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "");
     ~Furniture();
 
     void Draw();
@@ -22,7 +23,6 @@ public:
     Vector2 GetPosition() const { return {posX, posY}; }
     std::string GetName() const { return name; }
     Rectangle GetBoundingBox() const;
-    BoundingBox GetBoundingBox3D() const;
     bool IsPointInside(float x, float y) const;
 };
 
