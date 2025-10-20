@@ -9,7 +9,7 @@ find_package(nlohmann_json CONFIG REQUIRED)
 
 include_directories(include)
 
-add_executable(EchoesOfThePast src/main.cpp src/Room.cpp src/Furniture.cpp src/Drawable.cpp)
+add_executable(EchoesOfThePast src/main.cpp src/Room.cpp src/Furniture.cpp src/Drawable.cpp src/Game.cpp)
 
 target_link_libraries(EchoesOfThePast raylib nlohmann_json::nlohmann_json)
 
