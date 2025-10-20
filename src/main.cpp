@@ -8,7 +8,7 @@ int main() {
 
     SetTargetFPS(60);
 
-    Game game(1);
+    Game game;
 
     while (!WindowShouldClose()) {
         game.Update();

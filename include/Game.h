@@ -12,8 +12,8 @@ private:
     std::unique_ptr<Room> curentRoom;
 
 public:
-    Game(float startDay);
-    Game(float startDay, Room& room);
+    Game(int startDay=1);
+    Game(int startDay, Room& room);
     ~Game();
 
     void ChangeRoom(std::unique_ptr<Room> newRoom) ;
