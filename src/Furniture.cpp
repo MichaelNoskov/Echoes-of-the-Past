@@ -27,8 +27,8 @@ Furniture::Furniture(
 Furniture::~Furniture() {
 }
 
-void Furniture::Draw() {
-    surface.Draw(posX, posY);
+void Furniture::Draw(int side) {
+    surface.Draw(posX, posY, side);
 }
 
 Rectangle Furniture::GetBoundingBox() const {

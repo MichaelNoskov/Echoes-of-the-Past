@@ -14,7 +14,8 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath) {
     height = sceneHeight;
 
     camera = { 0 };
-    camera.target = { width / 2.0f, 0 };
+    camera.target = { width / 2.0f, height / 2.0f };
+    camera.offset = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -222,9 +223,25 @@ void Room::Draw() {
         }
     }
 
+    float centerX = camera.target.x;
+    float tolerance = -0.3f;
+    DrawCircle(centerX, camera.target.y, 5, RED);
+
     for (const auto& furniture : furnitureList) {
-        furniture->Draw();
-    }
+        float furnitureX = furniture->GetPosition().x;
+        float furnitureWidth = furniture->GetSize().x;
+
+        int side;
+        if (centerX < furnitureX - tolerance * furnitureWidth) {
+            side = 0;
+        } else if (centerX > furnitureX + furnitureWidth + tolerance * furnitureWidth) {
+            side = 2;
+        } else {
+            side = 1;
+        }
+        
+        furniture->Draw(side);
+        }
 
     EndMode2D();
 

@@ -51,8 +51,13 @@ Drawable::~Drawable() {
     UnloadTexture(textureRight);
 }
 
-void Drawable::Draw(float x, float y) {
+void Drawable::Draw(float x, float y, int side) {
     Texture2D texture = textureFront;
+    if (side == 0) {
+        texture = textureLeft;
+    } else if (side == 2) {
+        texture = textureRight;
+    }
 
     float transformedWidth = scale * width;
     float transformedHeight = scale * height;

@@ -27,9 +27,10 @@ public:
     );
     ~Furniture();
 
-    void Draw();
+    void Draw(int side = 1);
     void SetPosition(float x, float y) { posX = x; posY = y; }
     Vector2 GetPosition() const { return {posX, posY}; }
+    Vector2 GetSize() const { return surface.GetSize(); };
     std::string GetName() const { return name; }
     Rectangle GetBoundingBox() const;
     bool IsPointInside(float x, float y) const;

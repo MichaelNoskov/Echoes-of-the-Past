@@ -36,9 +36,10 @@ public:
     );
     ~Drawable();
 
-    void Draw(float x, float y);
+    void Draw(float x, float y, int side = 1);
     void SetScale(float newScale) { scale = newScale; };
     float GetScale() const { return scale; };
+    Vector2 GetSize() const { return {width * scale, height * scale}; };
     Rectangle GetBoundingBox(float x, float y) const;
     bool IsPointInside(float x, float y) const;
 };
