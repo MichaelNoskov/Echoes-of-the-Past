@@ -15,7 +15,16 @@ private:
     std::string name;
 
 public:
-    Furniture(const std::string& texturePath, float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "");
+    Furniture(
+        const std::string& texturePath,
+        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = ""
+    );
+    Furniture(
+        const std::string& textureFrontPath,
+        const std::string& textureLeftPath,
+        const std::string& textureRightPath,
+        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = ""
+    );
     ~Furniture();
 
     void Draw();

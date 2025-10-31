@@ -12,6 +12,18 @@ Furniture::Furniture(
 ) : surface(texturePath, width, height), posX(x), posY(y), name(furnitureName) {
 }
 
+Furniture::Furniture(
+    const std::string& textureFrontPath,
+    const std::string& textureLeftPath,
+    const std::string& textureRightPath,
+    float width,
+    float height,
+    float x,
+    float y,
+    const std::string& furnitureName
+) : surface(textureFrontPath, textureLeftPath, textureRightPath, width, height), posX(x), posY(y), name(furnitureName) {
+}
+
 Furniture::~Furniture() {
 }
 

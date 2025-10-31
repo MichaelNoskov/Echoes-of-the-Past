@@ -2,22 +2,58 @@
 #include <string>
 
 Drawable::Drawable(const std::string& texturePath) {
-    texture = LoadTexture(texturePath.c_str());
-    width = texture.width;
-    height = texture.height;
+    textureFront = LoadTexture(texturePath.c_str());
+    textureLeft = LoadTexture(texturePath.c_str());
+    textureRight = LoadTexture(texturePath.c_str());
+
+    width = textureFront.width;
+    height = textureFront.height;
+}
+
+Drawable::Drawable(
+    const std::string& textureFrontPath,
+    const std::string& textureLeftPath,
+    const std::string& textureRightPath
+) {
+    textureFront = LoadTexture(textureFrontPath.c_str());
+    textureLeft = LoadTexture(textureLeftPath.c_str());
+    textureRight = LoadTexture(textureRightPath.c_str());
+
+    width = textureFront.width;
+    height = textureFront.height;
 }
 
 Drawable::Drawable(const std::string& texturePath, float width, float height) {
-    texture = LoadTexture(texturePath.c_str());
+    textureFront = LoadTexture(texturePath.c_str());
+    textureLeft = LoadTexture(texturePath.c_str());
+    textureRight = LoadTexture(texturePath.c_str());
+    this->width = width;
+    this->height = height;
+}
+
+Drawable::Drawable(
+    const std::string& textureFrontPath,
+    const std::string& textureLeftPath,
+    const std::string& textureRightPath,
+    float width,
+    float height
+) {
+    textureFront = LoadTexture(textureFrontPath.c_str());
+    textureLeft = LoadTexture(textureLeftPath.c_str());
+    textureRight = LoadTexture(textureRightPath.c_str());
     this->width = width;
     this->height = height;
 }
 
 Drawable::~Drawable() {
-    UnloadTexture(texture);
+    UnloadTexture(textureFront);
+    UnloadTexture(textureLeft);
+    UnloadTexture(textureRight);
 }
 
 void Drawable::Draw(float x, float y) {
+    Texture2D texture = textureFront;
+
     float transformedWidth = scale * width;
     float transformedHeight = scale * height;
     Rectangle destRec = {x, y - transformedHeight, transformedWidth, transformedHeight};
