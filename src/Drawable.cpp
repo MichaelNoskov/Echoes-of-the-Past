@@ -6,6 +6,10 @@ Drawable::Drawable(const std::string& texturePath) {
     textureLeft = LoadTexture(texturePath.c_str());
     textureRight = LoadTexture(texturePath.c_str());
 
+    SetTextureFilter(textureFront, TEXTURE_FILTER_POINT);
+    SetTextureFilter(textureLeft, TEXTURE_FILTER_POINT);
+    SetTextureFilter(textureRight, TEXTURE_FILTER_POINT);
+
     width = textureFront.width;
     height = textureFront.height;
 }
@@ -19,6 +23,10 @@ Drawable::Drawable(
     textureLeft = LoadTexture(textureLeftPath.c_str());
     textureRight = LoadTexture(textureRightPath.c_str());
 
+    SetTextureFilter(textureFront, TEXTURE_FILTER_POINT);
+    SetTextureFilter(textureLeft, TEXTURE_FILTER_POINT);
+    SetTextureFilter(textureRight, TEXTURE_FILTER_POINT);
+
     width = textureFront.width;
     height = textureFront.height;
 }
@@ -27,6 +35,11 @@ Drawable::Drawable(const std::string& texturePath, float width, float height) {
     textureFront = LoadTexture(texturePath.c_str());
     textureLeft = LoadTexture(texturePath.c_str());
     textureRight = LoadTexture(texturePath.c_str());
+
+    SetTextureFilter(textureFront, TEXTURE_FILTER_POINT);
+    SetTextureFilter(textureLeft, TEXTURE_FILTER_POINT);
+    SetTextureFilter(textureRight, TEXTURE_FILTER_POINT);
+
     this->width = width;
     this->height = height;
 }
@@ -41,6 +54,11 @@ Drawable::Drawable(
     textureFront = LoadTexture(textureFrontPath.c_str());
     textureLeft = LoadTexture(textureLeftPath.c_str());
     textureRight = LoadTexture(textureRightPath.c_str());
+
+    SetTextureFilter(textureFront, TEXTURE_FILTER_POINT);
+    SetTextureFilter(textureLeft, TEXTURE_FILTER_POINT);
+    SetTextureFilter(textureRight, TEXTURE_FILTER_POINT);
+
     this->width = width;
     this->height = height;
 }

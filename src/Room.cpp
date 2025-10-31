@@ -20,7 +20,7 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath) {
     camera.zoom = 1.0f;
 
     cameraSensitivity = 1.5f;
-    cameraSmoothness = 0.05f;
+    cameraSmoothness = 1.5f;
 
     std::ifstream configFile(configPath);
     if (!configFile.is_open()) {
@@ -162,7 +162,7 @@ void Room::Update() {
     if (targetCameraX < minCameraX) targetCameraX = minCameraX;
     if (targetCameraX > maxCameraX) targetCameraX = maxCameraX;
 
-    camera.target.x += (targetCameraX - camera.target.x) * cameraSmoothness;
+    camera.target.x += GetFrameTime() * ((targetCameraX - camera.target.x) * cameraSmoothness);
 
     hoveredFurniture = GetFurnitureAtMousePosition();
 }
@@ -178,50 +178,56 @@ void Room::Draw() {
     float heightWallDown = height * percentWallDown;
     float heightFloor = height * percentFloor;
 
-    struct TextureData {
-        Texture2D& texture;
-        float height;
-        float yPosition;
-    };
+    // struct TextureData {
+    //     Texture2D& texture;
+    //     float height;
+    //     float yPosition;
+    // };
 
-    TextureData textures[] = {
-        {textureWallTop, heightWallTop, 0},
-        {textureWallDown, heightWallDown, heightWallTop},
-        {textureFloor, heightFloor, heightWallTop + heightWallDown}
-    };
+    // TextureData textures[] = {
+    //     {textureWallTop, heightWallTop, 0},
+    //     {textureWallDown, heightWallDown, heightWallTop},
+    //     {textureFloor, heightFloor, heightWallTop + heightWallDown}
+    // };
 
-    float tileWidths[3];
-    float scales[3];
+    // float tileWidths[3];
+    // float scales[3];
     
-    for (int j = 0; j < 3; j++) {
-        scales[j] = textures[j].height / textures[j].texture.height;
-        tileWidths[j] = textures[j].texture.width * scales[j];
-    }
+    // for (int j = 0; j < 3; j++) {
+    //     scales[j] = textures[j].height / textures[j].texture.height;
+    //     tileWidths[j] = textures[j].texture.width * scales[j];
+    // }
 
-    float minTileWidth = std::min(std::min(tileWidths[0], tileWidths[1]), tileWidths[2]);
-    int maxTiles = (int)ceil(width / minTileWidth);
+    // float minTileWidth = std::min(std::min(tileWidths[0], tileWidths[1]), tileWidths[2]);
+    // int maxTiles = (int)ceil(width / minTileWidth);
 
-    for (int i = 0; i <= maxTiles; i++) {
-        for (int j = 0; j < 3; j++) {
-            float x = i * tileWidths[j];
-            if (x < width) {
-                float currentDestWidth = (x + tileWidths[j] > width) ? width - x : tileWidths[j];
-                float sourceWidthRatio = currentDestWidth / tileWidths[j];
-                float currentSourceWidth = textures[j].texture.width * sourceWidthRatio;
+    // for (int i = 0; i <= maxTiles; i++) {
+    //     for (int j = 0; j < 3; j++) {
+    //         float x = i * tileWidths[j];
+    //         if (x < width) {
+    //             float currentDestWidth = (x + tileWidths[j] > width) ? width - x : tileWidths[j];
+    //             float sourceWidthRatio = currentDestWidth / tileWidths[j];
+    //             float currentSourceWidth = textures[j].texture.width * sourceWidthRatio;
                 
-                Rectangle sourceRec;
-                Rectangle destRec = {x, textures[j].yPosition, currentDestWidth, textures[j].height};
+    //             Rectangle sourceRec;
+    //             Rectangle destRec = {x, textures[j].yPosition, currentDestWidth, textures[j].height};
 
-                if (i % 2 == 1) {
-                    sourceRec = {(float)textures[j].texture.width, 0, -currentSourceWidth, (float)textures[j].texture.height};
-                } else {
-                    sourceRec = {0, 0, currentSourceWidth, (float)textures[j].texture.height};
-                }
+    //             if (i % 2 == 1) {
+    //                 sourceRec = {(float)textures[j].texture.width, 0, -currentSourceWidth, (float)textures[j].texture.height};
+    //             } else {
+    //                 sourceRec = {0, 0, currentSourceWidth, (float)textures[j].texture.height};
+    //             }
                 
-                DrawTexturePro(textures[j].texture, sourceRec, destRec, {0,0}, 0.0f, WHITE);
-            }
-        }
-    }
+    //             DrawTexturePro(textures[j].texture, sourceRec, destRec, {0,0}, 0.0f, WHITE);
+    //         }
+    //     }
+    // }
+
+    DrawRectangle(0, 0, width, height, GRAY);
+    
+    float indent = 20.0f;
+    Rectangle roomBounds = {-indent, -indent, width + 2*indent, height + 2*indent};
+    DrawRectangleLinesEx(roomBounds, indent, DARKGRAY);
 
     float centerX = camera.target.x;
     float tolerance = -0.3f;
