@@ -12,6 +12,7 @@ using json = nlohmann::json;
 Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath) {
     width = sceneWidth;
     height = sceneHeight;
+    lightsOn = true;
 
     camera = { 0 };
     camera.target = { width / 2.0f, height / 2.0f };
@@ -116,6 +117,10 @@ void Room::MoveFurniture(const std::string& name, float newX, float newY) {
     if (furniture) {
         furniture->SetPosition(newX, newY);
     }
+}
+
+void Room::ToggleLights() {
+    lightsOn = !lightsOn;
 }
 
 std::vector<std::string> Room::GetFurnitureNames() const {
@@ -226,8 +231,11 @@ void Room::Draw() {
     DrawRectangle(0, 0, width, height, GRAY);
     
     float indent = 20.0f;
-    Rectangle roomBounds = {-indent, -indent, width + 2*indent, height + 2*indent};
-    DrawRectangleLinesEx(roomBounds, indent, DARKGRAY);
+    Rectangle roomBounds = {-1, -1, width + 2, height + 2};
+    Rectangle frameBounds = {-indent, -indent, width + 2*indent, height + 2*indent};
+    DrawRectangleLinesEx(frameBounds, indent, DARKGRAY);
+    DrawRectangleLinesEx(frameBounds, 1, BLACK);
+    DrawRectangleLinesEx(roomBounds, 1, BLACK);
 
     float centerX = camera.target.x;
     float tolerance = -0.3f;

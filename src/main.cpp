@@ -37,11 +37,12 @@ int main() {
     while (!WindowShouldClose()) {
         game.Update();
 
-		BeginDrawing();
-        ClearBackground(BLACK);
-		game.Draw();
-		EndDrawing();
-	}
+        BeginDrawing();
+            ClearBackground(BLACK);
+            game.Draw();
+            DrawText("Click to toggle lights", 10, 10, 20, LIGHTGRAY);
+        EndDrawing();
+    }
 
     CloseWindow();
     return 0;

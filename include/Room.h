@@ -11,6 +11,7 @@ class Room {
 private:
     float height;
     float width;
+    bool lightsOn;
     Texture2D textureWallTop;
     Texture2D textureWallDown;
     Texture2D textureFloor;
@@ -22,6 +23,7 @@ private:
     std::vector<std::unique_ptr<Furniture>> furnitureList;
     Furniture* hoveredFurniture;
     Font font;
+    Furniture* GetFurnitureAtMousePosition();
 
 public:
     Room(float sceneWidth = 2000.0f, float sceneHeight = 1000.0f, const std::string& configPath = "res/config.json");
@@ -41,8 +43,8 @@ public:
     void MoveFurniture(const std::string& name, float newX, float newY);
     std::vector<std::string> GetFurnitureNames() const;
 
-private:
-    Furniture* GetFurnitureAtMousePosition();
+    void ToggleLights();
+    bool AreLightsOn() const { return lightsOn; }
+    void SetLights(bool on) { lightsOn = on; }
 };
-
 #endif
