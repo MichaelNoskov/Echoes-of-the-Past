@@ -7,6 +7,7 @@ uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 
 uniform float lightsOn;
+uniform float flashlightOn;
 uniform vec2 flashlightPos;
 uniform vec2 screenSize;
 
@@ -21,11 +22,18 @@ void main() {
 
     float radius = 0.1;
     float distanceToFlashlight = distance(normalizedCoords, normalizedFlashlightPos);
-    
     bool inFlashlightRange = distanceToFlashlight < radius;
-    
-    if (lightsOn > 0.5 || inFlashlightRange) {
-        finalColor = texelColor;
+
+    if (lightsOn > 0.5) {
+        if (flashlightOn > 0.5 && inFlashlightRange) {
+            float factor = 1.0 + 0.5;  // высветление 50%
+            finalColor = vec4(texelColor.rgb * factor, texelColor.a);
+        } else {
+            finalColor = texelColor;
+        }
+    } else if (flashlightOn > 0.5 && inFlashlightRange) {
+        float factor = 1.0 - 0.7;  // затемнение 70%
+        finalColor = vec4(texelColor.rgb * factor, texelColor.a);
     } else {
         if (texelColor.r < 0.1 && texelColor.g < 0.1 && texelColor.b < 0.1) {
             finalColor = vec4(1.0, 1.0, 1.0, texelColor.a);

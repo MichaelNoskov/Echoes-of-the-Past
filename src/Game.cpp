@@ -56,6 +56,8 @@ void Game::Update() {
     curentRoom->Update();
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         ToggleRoomLights();
+    } else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
+        ToggleRoomFlashLight();
     }
 
 }
@@ -67,6 +69,10 @@ void Game::Draw() {
         ClearBackground(BLACK);
         curentRoom->Draw();
     EndTextureMode();
+
+    int flashLightsOnLocation = GetShaderLocation(roomShader, "flashlightOn");
+    float flashLightOnValue = curentRoom->AreFlashLightOn() ? 1.0f : 0.0f;
+    SetShaderValue(roomShader, flashLightsOnLocation, &flashLightOnValue, SHADER_UNIFORM_FLOAT);
 
     int lightsOnLocation = GetShaderLocation(roomShader, "lightsOn");
     float lightsOnValue = curentRoom->AreLightsOn() ? 1.0f : 0.0f;
@@ -104,4 +110,8 @@ void Game::ChangeRoom(std::unique_ptr<Room> newRoom) {
 
 void Game::ToggleRoomLights() {
     curentRoom->ToggleLights();
+}
+
+void Game::ToggleRoomFlashLight() {
+    curentRoom->ToggleFlashLight();
 }

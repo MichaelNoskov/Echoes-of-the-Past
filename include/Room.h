@@ -12,6 +12,7 @@ private:
     float height;
     float width;
     bool lightsOn;
+    bool flashlightOn;
     Rectangle drawArea;
     Texture2D textureWallTop;
     Texture2D textureWallDown;
@@ -50,7 +51,9 @@ public:
     std::vector<std::string> GetFurnitureNames() const;
 
     void ToggleLights();
+    void ToggleFlashLight();
     bool AreLightsOn() const { return lightsOn; }
+    bool AreFlashLightOn() const { return flashlightOn; }
     void SetLights(bool on) { lightsOn = on; }
 
     Vector2 GetSize() const { return {width, height}; };

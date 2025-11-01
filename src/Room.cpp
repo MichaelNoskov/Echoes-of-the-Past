@@ -13,6 +13,7 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, R
     width = sceneWidth;
     height = sceneHeight;
     lightsOn = true;
+    flashlightOn = false;
     drawArea = area;
 
     camera = { 0 };
@@ -135,6 +136,10 @@ void Room::ToggleLights() {
     lightsOn = !lightsOn;
 }
 
+void Room::ToggleFlashLight() {
+    flashlightOn = !flashlightOn;
+}
+
 void Room::SetDrawArea(Rectangle area) {
     drawArea = area;
     camera.target = { drawArea.width / 2.0f, drawArea.height / 2.0f };
@@ -241,7 +246,7 @@ void Room::Draw() {
     EndScissorMode();
     DrawRectangleLinesEx(drawArea, 5, BLACK);
 
-    if ((hoveredFurniture != nullptr && lightsOn)) {
+    if (hoveredFurniture != nullptr && (lightsOn || flashlightOn)) {
         Vector2 mousePos = GetMousePosition();
         std::string name = hoveredFurniture->GetName();
 

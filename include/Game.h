@@ -23,6 +23,7 @@ public:
     void Draw();
 
     void ToggleRoomLights();
+    void ToggleRoomFlashLight();
 };
 
 #endif
