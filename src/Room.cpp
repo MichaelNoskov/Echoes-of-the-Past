@@ -215,6 +215,46 @@ std::vector<float> Room::getPedestals() {
     return pedestals;
 }
 
+bool Room::IsFurnitureOnPedestal(Furniture* furniture) {
+    if (!furniture) return false;
+    
+    Vector2 furniturePos = furniture->GetPosition();
+    Vector2 furnitureSize = furniture->GetSize();
+
+    float furnitureBottomY = furniturePos.y;
+    float furnitureLeftX = furniturePos.x;
+    float furnitureRightX = furniturePos.x + furnitureSize.x;
+
+    for (const auto& otherFurniture : furnitureList) {
+        if (otherFurniture.get() == furniture) continue;
+        if (otherFurniture->GetDragging()) continue;
+        
+        Vector2 otherPos = otherFurniture->GetPosition();
+        Vector2 otherSize = otherFurniture->GetSize();
+
+        float pedestalTopY = otherPos.y - otherSize.y;
+
+        const float verticalTolerance = 5.0f;
+        if (std::abs(furnitureBottomY - pedestalTopY) <= verticalTolerance) {
+
+            const float minOverlapRatio = 0.3f;
+            
+            float overlapLeft = std::max(furnitureLeftX, otherPos.x);
+            float overlapRight = std::min(furnitureRightX, otherPos.x + otherSize.x);
+            float overlapWidth = std::max(0.0f, overlapRight - overlapLeft);
+            
+            float furnitureWidth = furnitureSize.x;
+            float overlapRatio = overlapWidth / furnitureWidth;
+
+            if (overlapRatio >= minOverlapRatio) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
 void Room::Update() {
     Vector2 mousePosition = GetMousePosition();
 
@@ -252,16 +292,63 @@ void Room::Update() {
 
     if (handItem != nullptr) {
         bool collide = false;
-        for (const auto& furniture : furnitureList) {
-            if (handItem == furniture.get()) continue;
-            if (handItem->IntersectsWith(*furniture)) {
-                handItem->Collide(true);
-                collide = true;
-                break;
+
+        Vector2 furniturePos = handItem->GetPosition();
+        Vector2 furnitureSize = handItem->GetSize();
+        float furnitureBottomY = furniturePos.y;
+
+        bool onValidPedestal = false;
+        
+        for (const auto& otherFurniture : furnitureList) {
+            if (otherFurniture.get() == handItem) continue;
+            if (otherFurniture->GetDragging()) continue;
+            
+            Vector2 otherPos = otherFurniture->GetPosition();
+            Vector2 otherSize = otherFurniture->GetSize();
+
+            float pedestalTopY = otherPos.y - otherSize.y;
+
+            const float verticalTolerance = 5.0f;
+            if (std::abs(furnitureBottomY - pedestalTopY) <= verticalTolerance) {
+
+                float furnitureLeftX = furniturePos.x;
+                float furnitureRightX = furniturePos.x + furnitureSize.x;
+                float pedestalLeftX = otherPos.x;
+                float pedestalRightX = otherPos.x + otherSize.x;
+
+                const float minOverlapRatio = 0.7f;
+                
+                float overlapLeft = std::max(furnitureLeftX, pedestalLeftX);
+                float overlapRight = std::min(furnitureRightX, pedestalRightX);
+                float overlapWidth = std::max(0.0f, overlapRight - overlapLeft);
+                
+                float furnitureWidth = furnitureSize.x;
+                float overlapRatio = overlapWidth / furnitureWidth;
+
+                if (overlapRatio >= minOverlapRatio) {
+                    onValidPedestal = true;
+                    break;
+                } else {
+                    collide = true;
+                    break;
+                }
             }
         }
 
         if (!collide) {
+            for (const auto& furniture : furnitureList) {
+                if (handItem == furniture.get()) continue;
+                if (handItem->IntersectsWith(*furniture)) {
+                    handItem->Collide(true);
+                    collide = true;
+                    break;
+                }
+            }
+        }
+
+        if (collide) {
+            handItem->Collide(true);
+        } else {
             handItem->Collide(false);
         }
 
@@ -276,18 +363,17 @@ void Room::Update() {
             }
         }
 
-        Vector2 furniturePos = handItem->GetPosition();
-        Vector2 furnitureSize = handItem->GetSize();
-        handItem->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, posY);
+        Vector2 currentFurniturePos = handItem->GetPosition();
+        Vector2 currentFurnitureSize = handItem->GetSize();
+        handItem->SetPosition(mouseWorldPos.x - currentFurnitureSize.x/2.0f, posY);
 
-        Vector2 itemPos = handItem -> GetPosition();
+        Vector2 itemPos = handItem->GetPosition();
         handItem->SetPosition(std::max(itemPos.x, 0.0f), posY);
-        itemPos = handItem -> GetPosition();
-        Vector2 itemSize = handItem -> GetSize();
+        itemPos = handItem->GetPosition();
+        Vector2 itemSize = handItem->GetSize();
         handItem->SetPosition(std::min(itemPos.x, width - handItem->GetSize().x), std::max(itemPos.y, itemSize.y));
     }
 }
-
 
 void Room::Draw() {
     BeginScissorMode((int)drawArea.x, (int)drawArea.y, (int)drawArea.width, (int)drawArea.height);

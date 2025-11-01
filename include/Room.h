@@ -60,5 +60,6 @@ public:
     Vector2 GetSize() const { return {width, height}; };
 
     std::vector<float> getPedestals();
+    bool IsFurnitureOnPedestal(Furniture* furniture);
 };
 #endif
