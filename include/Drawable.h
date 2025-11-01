@@ -15,7 +15,7 @@ private:
     Texture2D outlineTextureFront, outlineTextureLeft, outlineTextureRight;
 
     void DrawOutline(float x, float y, int side, Color outlineColor, float visibility = 1);
-    Texture2D CreateOutlineTexture(Texture2D originalTexture, int outlineThickness = 2);
+    Texture2D CreateOutlineTexture(Texture2D originalTexture, float targetWidth, float targetHeight, int outlineThickness = 10);
 
 public:
     Drawable(

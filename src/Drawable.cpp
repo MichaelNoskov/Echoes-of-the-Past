@@ -15,9 +15,9 @@ Drawable::Drawable(const std::string& texturePath) {
     width = textureFront.width;
     height = textureFront.height;
 
-    outlineTextureFront = CreateOutlineTexture(textureFront);
-    outlineTextureLeft = CreateOutlineTexture(textureLeft);
-    outlineTextureRight = CreateOutlineTexture(textureRight);
+    outlineTextureFront = CreateOutlineTexture(textureFront, width, height);
+    outlineTextureLeft = CreateOutlineTexture(textureLeft, width, height);
+    outlineTextureRight = CreateOutlineTexture(textureRight, width, height);
     
     SetTextureFilter(outlineTextureFront, TEXTURE_FILTER_POINT);
     SetTextureFilter(outlineTextureLeft, TEXTURE_FILTER_POINT);
@@ -40,9 +40,9 @@ Drawable::Drawable(
     width = textureFront.width;
     height = textureFront.height;
 
-    outlineTextureFront = CreateOutlineTexture(textureFront);
-    outlineTextureLeft = CreateOutlineTexture(textureLeft);
-    outlineTextureRight = CreateOutlineTexture(textureRight);
+    outlineTextureFront = CreateOutlineTexture(textureFront, width, height);
+    outlineTextureLeft = CreateOutlineTexture(textureLeft, width, height);
+    outlineTextureRight = CreateOutlineTexture(textureRight, width, height);
     
     SetTextureFilter(outlineTextureFront, TEXTURE_FILTER_POINT);
     SetTextureFilter(outlineTextureLeft, TEXTURE_FILTER_POINT);
@@ -61,9 +61,9 @@ Drawable::Drawable(const std::string& texturePath, float width, float height) {
     this->width = width;
     this->height = height;
 
-    outlineTextureFront = CreateOutlineTexture(textureFront);
-    outlineTextureLeft = CreateOutlineTexture(textureLeft);
-    outlineTextureRight = CreateOutlineTexture(textureRight);
+    outlineTextureFront = CreateOutlineTexture(textureFront, width, height);
+    outlineTextureLeft = CreateOutlineTexture(textureLeft, width, height);
+    outlineTextureRight = CreateOutlineTexture(textureRight, width, height);
     
     SetTextureFilter(outlineTextureFront, TEXTURE_FILTER_POINT);
     SetTextureFilter(outlineTextureLeft, TEXTURE_FILTER_POINT);
@@ -88,28 +88,43 @@ Drawable::Drawable(
     this->width = width;
     this->height = height;
 
-    outlineTextureFront = CreateOutlineTexture(textureFront);
-    outlineTextureLeft = CreateOutlineTexture(textureLeft);
-    outlineTextureRight = CreateOutlineTexture(textureRight);
+    outlineTextureFront = CreateOutlineTexture(textureFront, width, height);
+    outlineTextureLeft = CreateOutlineTexture(textureLeft, width, height);
+    outlineTextureRight = CreateOutlineTexture(textureRight, width, height);
     
     SetTextureFilter(outlineTextureFront, TEXTURE_FILTER_POINT);
     SetTextureFilter(outlineTextureLeft, TEXTURE_FILTER_POINT);
     SetTextureFilter(outlineTextureRight, TEXTURE_FILTER_POINT);
 }
 
-Texture2D Drawable::CreateOutlineTexture(Texture2D originalTexture, int outlineThickness) {
-    Image image = LoadImageFromTexture(originalTexture);
+Texture2D Drawable::CreateOutlineTexture(Texture2D originalTexture, float targetWidth, float targetHeight, int outlineThickness) {
+    Image targetImage = GenImageColor((int)targetWidth, (int)targetHeight, BLANK);
 
-    int newWidth = originalTexture.width + outlineThickness * 2;
-    int newHeight = originalTexture.height + outlineThickness * 2;
+    Image originalImage = LoadImageFromTexture(originalTexture);
+
+    for (int y = 0; y < (int)targetHeight; y++) {
+        for (int x = 0; x < (int)targetWidth; x++) {
+            int origX = (int)((float)x * originalTexture.width / targetWidth);
+            int origY = (int)((float)y * originalTexture.height / targetHeight);
+            
+            origX = std::min(origX, originalTexture.width - 1);
+            origY = std::min(origY, originalTexture.height - 1);
+            
+            Color color = GetImageColor(originalImage, origX, origY);
+            ImageDrawPixel(&targetImage, x, y, color);
+        }
+    }
+
+    int newWidth = (int)targetWidth + outlineThickness * 2;
+    int newHeight = (int)targetHeight + outlineThickness * 2;
     
     Image outlineImage = GenImageColor(newWidth, newHeight, BLANK);
     
     auto isPixelOpaque = [&](int x, int y) -> bool {
-        if (x < 0 || x >= originalTexture.width || y < 0 || y >= originalTexture.height) 
+        if (x < 0 || x >= (int)targetWidth || y < 0 || y >= (int)targetHeight) 
             return false;
         
-        Color color = GetImageColor(image, x, y);
+        Color color = GetImageColor(targetImage, x, y);
         return color.a > 10;
     };
 
@@ -118,8 +133,8 @@ Texture2D Drawable::CreateOutlineTexture(Texture2D originalTexture, int outlineT
             int origX = x - outlineThickness;
             int origY = y - outlineThickness;
 
-            if (origX >= 0 && origX < originalTexture.width && 
-                origY >= 0 && origY < originalTexture.height && 
+            if (origX >= 0 && origX < (int)targetWidth && 
+                origY >= 0 && origY < (int)targetHeight && 
                 isPixelOpaque(origX, origY)) {
                 continue;
             }
@@ -146,11 +161,13 @@ Texture2D Drawable::CreateOutlineTexture(Texture2D originalTexture, int outlineT
 
     Texture2D outlineTexture = LoadTextureFromImage(outlineImage);
 
-    UnloadImage(image);
+    UnloadImage(originalImage);
+    UnloadImage(targetImage);
     UnloadImage(outlineImage);
     
     return outlineTexture;
 }
+
 Drawable::~Drawable() {
     UnloadTexture(textureFront);
     UnloadTexture(textureLeft);
@@ -171,6 +188,7 @@ void Drawable::Draw(float x, float y, int side) {
     float transformedWidth = scale * width;
     float transformedHeight = scale * height;
     Rectangle destRec = {x, y - transformedHeight, transformedWidth, transformedHeight};
+
     Rectangle sourceRec = {0, 0, (float)texture.width, (float)texture.height};
     Vector2 origin = {0, 0};
 
@@ -189,15 +207,22 @@ void Drawable::DrawOutline(float x, float y, int side, Color outlineColor, float
         outlineTexture = outlineTextureRight;
     }
 
-    float transformedWidth = scale * width;
-    float transformedHeight = scale * height;
+    float transformedWidth = scale * width - (outlineTexture.width - scale * width);
+    float transformedHeight = scale * height - (outlineTexture.height - scale * height);
 
-    Rectangle destRec = {x, y - transformedHeight, transformedWidth, transformedHeight};
-    DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height}, 
-                    destRec, {0, 0}, 0.0f, Fade(WHITE, visibility));
+    float outlineDrawWidth = scale * width;
+    float outlineDrawHeight = scale * height;
 
+    float offsetX = (outlineDrawWidth - transformedWidth) / 2;
+    float offsetY = (outlineDrawHeight - transformedHeight) / 2;
+
+    Rectangle outlineDestRec = {x, y - transformedHeight - 2*offsetY, outlineDrawWidth, outlineDrawHeight};
     DrawTexturePro(outlineTexture, {0, 0, (float)outlineTexture.width, (float)outlineTexture.height}, 
-                   destRec, {0, 0}, 0.0f, outlineColor);
+                   outlineDestRec, {0, 0}, 0.0f, outlineColor);
+
+    Rectangle destRec = {x + offsetX, y - transformedHeight - offsetY, transformedWidth, transformedHeight};
+    Rectangle sourceRec = {0, 0, (float)texture.width, (float)texture.height};
+    DrawTexturePro(texture, sourceRec, destRec, {0, 0}, 0.0f, Fade(WHITE, visibility));
 }
 
 void Drawable::DrawDragging(float x, float y, int side) {
