@@ -16,7 +16,7 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, R
     drawArea = area;
 
     camera = { 0 };
-    camera.target = { drawArea.x, drawArea.height / 2.0f };
+    camera.target = { drawArea.width / 2.0f, drawArea.height / 2.0f };
     camera.offset = { drawArea.width / 2.0f + drawArea.x, drawArea.height };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
@@ -137,11 +137,11 @@ void Room::ToggleLights() {
 
 void Room::SetDrawArea(Rectangle area) {
     drawArea = area;
-    camera.offset = { area.width / 2.0f, area.height / 2.0f };
+    camera.target = { drawArea.x, drawArea.height / 2.0f };
+    camera.offset = { drawArea.width / 2.0f + drawArea.x, drawArea.height };
 
-    float cameraViewWidth = drawArea.width / camera.zoom;
-    float minCameraX = cameraViewWidth / 2.0f;
-    float maxCameraX = width - cameraViewWidth / 2.0f;
+    float minCameraX = drawArea.width / 2.0f;
+    float maxCameraX = width - drawArea.width / 2.0f;
 
     if (camera.target.x < minCameraX) camera.target.x = minCameraX;
     if (camera.target.x > maxCameraX) camera.target.x = maxCameraX;
