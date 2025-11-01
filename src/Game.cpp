@@ -9,8 +9,8 @@ Game::Game(int startDay) : day(startDay) {
     roomTarget = LoadRenderTexture(600 * 7, 600 * 2);
 
     Rectangle roomArea = {
-        (GetScreenWidth() - 1000) / 2.0f,
-        (GetScreenHeight() - 600) / 2.0f,
+        0,
+        100,
         1000.0f,
         600.0f
     };
