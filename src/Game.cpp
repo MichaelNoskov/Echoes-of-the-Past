@@ -50,6 +50,7 @@ Game::Game(int startDay) : day(startDay) {
 Game::Game(int startDay, Room& room) : day(startDay), curentRoom(&room) {}
 
 Game::~Game() {
+    UnloadShader(roomShader);
 }
 
 void Game::Update() {
