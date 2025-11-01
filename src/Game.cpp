@@ -6,11 +6,11 @@
 
 Game::Game(int startDay) : day(startDay) {
     roomShader = LoadShader(0, "res/shaders/room_shader.fs");
-    roomTarget = LoadRenderTexture(600 * 7, 600 * 2);
+    roomTarget = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     Rectangle roomArea = {
-        500,
-        500,
+        (GetScreenWidth() - 1000) / 2.0f,
+        (GetScreenHeight() - 600) / 2.0f,
         1000.0f,
         600.0f
     };
