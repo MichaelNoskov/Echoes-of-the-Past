@@ -3,51 +3,6 @@
 #include <vector>
 #include <algorithm>
 
-Texture2D Drawable::CreateOutlineTexture(Texture2D originalTexture) {
-    Image image = LoadImageFromTexture(originalTexture);
-    Image outlineImage = GenImageColor(originalTexture.width, originalTexture.height, BLANK);
-    
-    auto isPixelOpaque = [&](int x, int y) -> bool {
-        if (x < 0 || x >= originalTexture.width || y < 0 || y >= originalTexture.height) 
-            return false;
-        
-        Color color = GetImageColor(image, x, y);
-        return color.a > 10;
-    };
-
-    for (int y = 0; y < originalTexture.height; y++) {
-        for (int x = 0; x < originalTexture.width; x++) {
-            if (isPixelOpaque(x, y)) {
-                bool isBorder = false;
-                for (int ny = y - 1; ny <= y + 1; ny++) {
-                    for (int nx = x - 1; nx <= x + 1; nx++) {
-                        if (nx == x && ny == y) continue;
-                        if (!isPixelOpaque(nx, ny)) {
-                            isBorder = true;
-                            break;
-                        }
-                    }
-                    if (isBorder) break;
-                }
-
-                if (isBorder) {
-                    // Используем белый цвет вместо красного
-                    // Альфа-канал = 255 для полной непрозрачности
-                    ImageDrawPixel(&outlineImage, x, y, {255, 255, 255, 255});
-                }
-            }
-        }
-    }
-
-    Texture2D outlineTexture = LoadTextureFromImage(outlineImage);
-
-    UnloadImage(image);
-    UnloadImage(outlineImage);
-    
-    return outlineTexture;
-}
-
-// Конструкторы остаются без изменений
 Drawable::Drawable(const std::string& texturePath) {
     textureFront = LoadTexture(texturePath.c_str());
     textureLeft = LoadTexture(texturePath.c_str());
@@ -142,6 +97,60 @@ Drawable::Drawable(
     SetTextureFilter(outlineTextureRight, TEXTURE_FILTER_POINT);
 }
 
+Texture2D Drawable::CreateOutlineTexture(Texture2D originalTexture, int outlineThickness) {
+    Image image = LoadImageFromTexture(originalTexture);
+
+    int newWidth = originalTexture.width + outlineThickness * 2;
+    int newHeight = originalTexture.height + outlineThickness * 2;
+    
+    Image outlineImage = GenImageColor(newWidth, newHeight, BLANK);
+    
+    auto isPixelOpaque = [&](int x, int y) -> bool {
+        if (x < 0 || x >= originalTexture.width || y < 0 || y >= originalTexture.height) 
+            return false;
+        
+        Color color = GetImageColor(image, x, y);
+        return color.a > 10;
+    };
+
+    for (int y = 0; y < newHeight; y++) {
+        for (int x = 0; x < newWidth; x++) {
+            int origX = x - outlineThickness;
+            int origY = y - outlineThickness;
+
+            if (origX >= 0 && origX < originalTexture.width && 
+                origY >= 0 && origY < originalTexture.height && 
+                isPixelOpaque(origX, origY)) {
+                continue;
+            }
+
+            bool isOutline = false;
+            for (int dy = -outlineThickness; dy <= outlineThickness && !isOutline; dy++) {
+                for (int dx = -outlineThickness; dx <= outlineThickness && !isOutline; dx++) {
+                    if (dx == 0 && dy == 0) continue;
+                    
+                    int neighborX = origX + dx;
+                    int neighborY = origY + dy;
+                    
+                    if (isPixelOpaque(neighborX, neighborY)) {
+                        isOutline = true;
+                    }
+                }
+            }
+            
+            if (isOutline) {
+                ImageDrawPixel(&outlineImage, x, y, {255, 255, 255, 255});
+            }
+        }
+    }
+
+    Texture2D outlineTexture = LoadTextureFromImage(outlineImage);
+
+    UnloadImage(image);
+    UnloadImage(outlineImage);
+    
+    return outlineTexture;
+}
 Drawable::~Drawable() {
     UnloadTexture(textureFront);
     UnloadTexture(textureLeft);
@@ -182,21 +191,21 @@ void Drawable::DrawOutline(float x, float y, int side, Color outlineColor, float
 
     float transformedWidth = scale * width;
     float transformedHeight = scale * height;
-    Rectangle destRec = {x, y - transformedHeight, transformedWidth, transformedHeight};
 
+    Rectangle destRec = {x, y - transformedHeight, transformedWidth, transformedHeight};
     DrawTexturePro(texture, {0, 0, (float)texture.width, (float)texture.height}, 
-                    destRec, {0, 0}, 0.0f, Fade(WHITE,visibility));
+                    destRec, {0, 0}, 0.0f, Fade(WHITE, visibility));
 
     DrawTexturePro(outlineTexture, {0, 0, (float)outlineTexture.width, (float)outlineTexture.height}, 
                    destRec, {0, 0}, 0.0f, outlineColor);
 }
 
 void Drawable::DrawDragging(float x, float y, int side) {
-    DrawOutline(x, y, side, WHITE, 0.5f);
+    DrawOutline(x, y, side, WHITE);
 }
 
 void Drawable::DrawCollisioning(float x, float y, int side) {
-    DrawOutline(x, y, side, RED);
+    DrawOutline(x, y, side, RED, 0.5f);
 }
 
 Rectangle Drawable::GetBoundingBox(float x, float y) const {

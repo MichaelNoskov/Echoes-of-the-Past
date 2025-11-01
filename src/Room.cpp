@@ -9,6 +9,21 @@
 
 using json = nlohmann::json;
 
+void moveToBack(std::vector<std::unique_ptr<Furniture>>& furniture, 
+                Furniture* target) {
+    if (!target) return;
+    
+    auto it = std::find_if(furniture.begin(), furniture.end(),
+        [target](const std::unique_ptr<Furniture>& ptr) {
+            return ptr.get() == target;
+        });
+    
+    if (it != furniture.end() && it != furniture.end() - 1) {
+        size_t index = std::distance(furniture.begin(), it);
+        std::rotate(it, it + 1, furniture.end());
+    }
+}
+
 Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area) {
     width = sceneWidth;
     height = sceneHeight;
@@ -60,6 +75,7 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, R
 
     font = GetFontDefault();
     hoveredFurniture = nullptr;
+    handItem = nullptr;
 }
 
 
@@ -208,22 +224,39 @@ void Room::Update() {
 
     camera.target.x += GetFrameTime() * ((targetCameraX - camera.target.x) * cameraSmoothness);
 
-    Furniture* newHoveredFurniture = GetFurnitureAtMousePosition();
-    if (newHoveredFurniture != nullptr && IsMouseButtonDown(MOUSE_LEFT_BUTTON)){
-        newHoveredFurniture->Drag(true);
-    }
-    if (hoveredFurniture == nullptr || (!IsMouseButtonDown(MOUSE_LEFT_BUTTON) || newHoveredFurniture == nullptr) && newHoveredFurniture != hoveredFurniture) {
-        if (hoveredFurniture != nullptr){
-            hoveredFurniture->Drag(false);
-        }
-        hoveredFurniture = newHoveredFurniture;
+    hoveredFurniture = GetFurnitureAtMousePosition();
+
+    if (lightsOn && hoveredFurniture != nullptr && IsMouseButtonDown(MOUSE_LEFT_BUTTON) && handItem == nullptr) {
+        handItem = hoveredFurniture;
+        handItem->Drag(true);
+        moveToBack(furnitureList, handItem);
+    } else if (!IsMouseButtonDown(MOUSE_LEFT_BUTTON) && handItem != nullptr && !handItem->GetCollisioning()) {
+        handItem->Drag(false);
+        handItem = nullptr;
     }
 
-    if (hoveredFurniture != nullptr && (lightsOn || flashlightOn) && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+    if (handItem != nullptr) {
+        bool collide = false;
+        for (const auto& furniture : furnitureList) {
+            if (handItem == furniture.get()) continue;
+            if (handItem->IntersectsWith(*furniture)) {
+                handItem->Collide(true);
+                collide = true;
+                break;
+            }
+        }
+        if (handItem->GetPosition().x < 0 || handItem->GetPosition().x > width - handItem->GetSize().x) {
+            handItem->Collide(true);
+            collide = true;
+        }
+        if (!collide) {
+            handItem->Collide(false);
+        }
+
         Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
-        Vector2 furniturePos = hoveredFurniture->GetPosition();
-        Vector2 furnitureSize = hoveredFurniture->GetSize();
-        hoveredFurniture->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, furniturePos.y);
+        Vector2 furniturePos = handItem->GetPosition();
+        Vector2 furnitureSize = handItem->GetSize();
+        handItem->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, furniturePos.y);
     }
 }
 

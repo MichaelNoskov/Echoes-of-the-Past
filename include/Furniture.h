@@ -11,9 +11,9 @@ private:
     float posY;
 
     bool isDragging = false;
+    bool isCollisioning = false;
 
     Drawable surface;
-
     std::string name;
 
 public:
@@ -38,6 +38,10 @@ public:
     bool IsPointInside(float x, float y) const;
     void Drag(bool drag) { isDragging = drag; };
     bool GetDragging() { return isDragging; };
+    void Collide(bool collision) { isCollisioning = collision; };
+    bool GetCollisioning() { return isCollisioning; };
+    bool IntersectsWithArea(const Rectangle& area) const;
+    bool IntersectsWith(const Furniture& other) const;
 };
 
 #endif

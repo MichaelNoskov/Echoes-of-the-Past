@@ -24,6 +24,7 @@ private:
     
     std::vector<std::unique_ptr<Furniture>> furnitureList;
     Furniture* hoveredFurniture;
+    Furniture* handItem;
     Font font;
     Furniture* GetFurnitureAtMousePosition();
     Vector2 ScreenToRoomSpace(Vector2 screenPos) const;
