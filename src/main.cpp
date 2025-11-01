@@ -4,8 +4,8 @@
 int main() {
     SetTargetFPS(60);
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
-    int windowHeight = 600 * 2;
-    int windowWidth = 800 * 2;
+    int windowHeight = 600 * 3;
+    int windowWidth = 800 * 3;
     InitWindow(windowWidth, windowHeight, "Game with Random Room Background");
 
     float loadingTime = 0;
