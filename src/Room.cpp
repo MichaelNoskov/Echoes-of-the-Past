@@ -181,19 +181,20 @@ Furniture* Room::GetFurnitureAtMousePosition() {
 
 void Room::Update() {
     Vector2 mousePosition = GetMousePosition();
-    float centerX = GetScreenWidth() / 2.0f;
-    float screenWidth = GetScreenWidth();
 
+    float relativeMouseX = mousePosition.x - drawArea.x;
+    float centerX = drawArea.width / 2.0f;
+    
     float mouseOffsetX = 0;
-    if (mousePosition.x < screenWidth * 0.3f)
-        mouseOffsetX = (mousePosition.x - screenWidth * 0.3f) / centerX;
-    else if (mousePosition.x > screenWidth * 0.7f)
-        mouseOffsetX = (mousePosition.x - screenWidth * 0.7f) / centerX;
+    if (relativeMouseX < drawArea.width * 0.3f)
+        mouseOffsetX = (relativeMouseX - drawArea.width * 0.3f) / centerX;
+    else if (relativeMouseX > drawArea.width * 0.7f)
+        mouseOffsetX = (relativeMouseX - drawArea.width * 0.7f) / centerX;
 
     float targetCameraX = camera.target.x + mouseOffsetX * cameraSensitivity * 200;
 
-    float cameraWidth = GetScreenWidth() / camera.zoom;
-    
+    float cameraViewWidth = drawArea.width / camera.zoom;
+
     float minCameraX = drawArea.width / 2.0f;
     float maxCameraX = width - drawArea.width / 2.0f;
 
