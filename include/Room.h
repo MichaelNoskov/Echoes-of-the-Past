@@ -58,5 +58,7 @@ public:
     void SetLights(bool on) { lightsOn = on; }
 
     Vector2 GetSize() const { return {width, height}; };
+
+    std::vector<float> getPedestals();
 };
 #endif

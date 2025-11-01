@@ -14,7 +14,7 @@ Game::Game(int startDay) : day(startDay) {
     roomTarget = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     float roomWidth = 600*4;
-    float roomHeight = 800;
+    float roomHeight = 900;
 
     float windowWidth = std::min(GetScreenWidth() * 0.5f, roomWidth);
 

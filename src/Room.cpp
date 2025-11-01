@@ -201,6 +201,20 @@ Furniture* Room::GetFurnitureAtMousePosition() {
     return nullptr;
 }
 
+std::vector<float> Room::getPedestals() {
+    std::vector<float> pedestals = {};
+    for (const auto& furniture : furnitureList) {
+        if (furniture->GetDragging()) {
+            continue;
+        }
+        pedestals.push_back(furniture->GetPosition().y - furniture->GetSize().y);
+    }
+
+    std::sort(pedestals.begin(), pedestals.end(), std::less<float>());
+    
+    return pedestals;
+}
+
 void Room::Update() {
     Vector2 mousePosition = GetMousePosition();
 
@@ -251,15 +265,26 @@ void Room::Update() {
             handItem->Collide(false);
         }
 
+        std::vector<float> pedestals = getPedestals();
         Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+
+        float posY = height;
+        for (float& pedestal : pedestals) {
+            if (mouseWorldPos.y < pedestal) {
+                posY = pedestal;
+                break;
+            }
+        }
+
         Vector2 furniturePos = handItem->GetPosition();
         Vector2 furnitureSize = handItem->GetSize();
-        handItem->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, furniturePos.y);
+        handItem->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, posY);
 
         Vector2 itemPos = handItem -> GetPosition();
-        handItem->SetPosition(std::max(itemPos.x, 0.0f), itemPos.y);
+        handItem->SetPosition(std::max(itemPos.x, 0.0f), posY);
         itemPos = handItem -> GetPosition();
-        handItem->SetPosition(std::min(itemPos.x, width - handItem->GetSize().x), itemPos.y);
+        Vector2 itemSize = handItem -> GetSize();
+        handItem->SetPosition(std::min(itemPos.x, width - handItem->GetSize().x), std::max(itemPos.y, itemSize.y));
     }
 }
 
