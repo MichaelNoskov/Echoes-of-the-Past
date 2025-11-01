@@ -13,10 +13,10 @@ Game::Game(int startDay) : day(startDay) {
 
     roomTarget = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
-    float roomWidth = 600*7;
+    float roomWidth = 600*4;
     float roomHeight = 800;
 
-    float windowWidth = std::min(GetScreenWidth() * 0.7f, roomWidth);
+    float windowWidth = std::min(GetScreenWidth() * 0.5f, roomWidth);
 
     Rectangle roomArea = {
         (GetScreenWidth() - windowWidth) / 2.0f,
@@ -43,7 +43,7 @@ Game::Game(int startDay) : day(startDay) {
         "res/textures/furniture/шкаф.PNG",
         "res/textures/furniture/шкаф_л.PNG",
         "res/textures/furniture/шкаф_п.PNG",
-        400.0f, 550.0f, 600.0f * 5 - 700, roomHeight, "???"
+        400.0f, 550.0f, roomWidth - 650, roomHeight, "???"
     ));
 }
 
@@ -54,7 +54,7 @@ Game::~Game() {
 
 void Game::Update() {
     curentRoom->Update();
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (IsKeyPressed(KEY_L)) {
         ToggleRoomLights();
     } else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
         ToggleRoomFlashLight();
@@ -101,7 +101,9 @@ void Game::Draw() {
     
     EndScissorMode();
 
-    DrawText("Click to toggle lights", 10, 10, 20, LIGHTGRAY);
+    DrawText("Press L to toggle lights", 10, 10, 20, LIGHTGRAY);
+    DrawText("Right click to toggle flashlight", 10, 40, 20, LIGHTGRAY);
+    DrawText("Press left to move furniture", 10, 70, 20, LIGHTGRAY);
 }
 
 void Game::ChangeRoom(std::unique_ptr<Room> newRoom) {

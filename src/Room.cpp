@@ -22,7 +22,7 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, R
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    cameraSensitivity = 2.0f;
+    cameraSensitivity = 3.0f;
     cameraSmoothness = 5.0f;
 
     std::ifstream configFile(configPath);
@@ -208,7 +208,17 @@ void Room::Update() {
 
     camera.target.x += GetFrameTime() * ((targetCameraX - camera.target.x) * cameraSmoothness);
 
-    hoveredFurniture = GetFurnitureAtMousePosition();
+    Furniture* newHoveredFurniture = GetFurnitureAtMousePosition();
+    if (hoveredFurniture == nullptr || (!IsMouseButtonDown(MOUSE_LEFT_BUTTON) || newHoveredFurniture == nullptr) && newHoveredFurniture != hoveredFurniture) {
+        hoveredFurniture = newHoveredFurniture;
+    }
+
+    if (hoveredFurniture != nullptr && (lightsOn || flashlightOn) && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+        Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+        Vector2 furniturePos = hoveredFurniture->GetPosition();
+        Vector2 furnitureSize = hoveredFurniture->GetSize();
+        hoveredFurniture->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, furniturePos.y);
+    }
 }
 
 
