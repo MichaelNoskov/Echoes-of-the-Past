@@ -8,32 +8,37 @@ Game::Game(int startDay) : day(startDay) {
     roomShader = LoadShader(0, "res/shaders/room_shader.fs");
     roomTarget = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
+    float roomWidth = 600*7;
+    float roomHeight = 800;
+
+    float windowWidth = std::min(GetScreenWidth() * 0.7f, roomWidth);
+
     Rectangle roomArea = {
-        (GetScreenWidth() - 1000) / 2.0f,
-        (GetScreenHeight() - 600) / 2.0f,
-        1000.0f,
-        600.0f
+        (GetScreenWidth() - windowWidth) / 2.0f,
+        (GetScreenHeight() - roomHeight) / 3.5f,
+        windowWidth,
+        roomHeight
     };
 
-    curentRoom = std::make_unique<Room>(600*7, 600, "res/config.json", roomArea);
+    curentRoom = std::make_unique<Room>(roomWidth, roomHeight, "res/config.json", roomArea);
 
     curentRoom->AddFurniture(std::make_unique<Furniture>(
         "res/textures/furniture/монитор.PNG",
         "res/textures/furniture/монитор_л.PNG",
         "res/textures/furniture/монитор_п.PNG",
-        250.0f, 177.0f, 200.0f, 600.0f, "Monitor"
+        250.0f, 177.0f, 200.0f, roomHeight, "Monitor"
     ));
     curentRoom->AddFurniture(std::make_unique<Furniture>(
         "res/textures/furniture/стол.PNG",
         "res/textures/furniture/стол_л.PNG",
         "res/textures/furniture/стол_п.PNG",
-        425.0f, 255.0f, 700.0f, 600.0f, "Table"
+        425.0f, 255.0f, 700.0f, roomHeight, "Table"
     ));
     curentRoom->AddFurniture(std::make_unique<Furniture>(
         "res/textures/furniture/шкаф.PNG",
         "res/textures/furniture/шкаф_л.PNG",
         "res/textures/furniture/шкаф_п.PNG",
-        400.0f, 550.0f, 600.0f * 5 - 700, 600.0f, "???"
+        400.0f, 550.0f, 600.0f * 5 - 700, roomHeight, "???"
     ));
 }
 
