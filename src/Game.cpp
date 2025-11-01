@@ -57,7 +57,7 @@ void Game::Update() {
 
 void Game::Draw() {
     Vector2 roomSize = curentRoom->GetSize();
-
+    ClearBackground(BLACK);
     BeginTextureMode(roomTarget);
         ClearBackground(BLACK);
         curentRoom->Draw();
