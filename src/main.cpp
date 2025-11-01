@@ -9,7 +9,7 @@ int main() {
     InitWindow(windowWidth, windowHeight, "Game with Random Room Background");
 
     float loadingTime = 0;
-    while (loadingTime < 2.0f) { // Показываем загрузку 2 секунды
+    while (loadingTime < 1.0f) {
         loadingTime += GetFrameTime();
 
         BeginDrawing();
@@ -22,9 +22,8 @@ int main() {
         int textY = (windowHeight - fontSize) / 2;
         
         DrawText(loadingText, textX, textY, fontSize, WHITE);
-        
-        // Анимированные точки
-        int dotCount = (int)(loadingTime * 3) % 4; // Меняем количество точек
+
+        int dotCount = (int)(loadingTime * 3) % 4;
         for (int i = 0; i < dotCount; i++) {
             DrawText(".", textX + textWidth + i * 15, textY, fontSize, WHITE);
         }
@@ -38,9 +37,7 @@ int main() {
         game.Update();
 
         BeginDrawing();
-            ClearBackground(BLACK);
             game.Draw();
-            DrawText("Click to toggle lights", 10, 10, 20, LIGHTGRAY);
         EndDrawing();
     }
 

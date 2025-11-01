@@ -9,19 +9,20 @@
 
 using json = nlohmann::json;
 
-Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath) {
+Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area) {
     width = sceneWidth;
     height = sceneHeight;
     lightsOn = true;
+    drawArea = area;
 
     camera = { 0 };
-    camera.target = { width / 2.0f, height / 2.0f };
-    camera.offset = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
+    camera.target = { drawArea.width / 2.0f, drawArea.height / 2.0f };
+    camera.offset = { drawArea.width, drawArea.height };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    cameraSensitivity = 1.5f;
-    cameraSmoothness = 1.5f;
+    cameraSensitivity = 5.0f;
+    cameraSmoothness = 5.0f;
 
     std::ifstream configFile(configPath);
     if (!configFile.is_open()) {
@@ -60,10 +61,21 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath) {
     hoveredFurniture = nullptr;
 }
 
+
 Room::~Room() {
     UnloadTexture(textureWallTop);
     UnloadTexture(textureWallDown);
     UnloadTexture(textureFloor);
+}
+
+Vector2 Room::ScreenToRoomSpace(Vector2 screenPos) const {
+    Vector2 worldPos = GetScreenToWorld2D(screenPos, camera);
+    return worldPos;
+}
+
+Vector2 Room::RoomToScreenSpace(Vector2 roomPos) const {
+    Vector2 screenPos = GetWorldToScreen2D(roomPos, camera);
+    return screenPos;
 }
 
 void Room::AddFurniture(std::unique_ptr<Furniture> furniture) {
@@ -123,6 +135,22 @@ void Room::ToggleLights() {
     lightsOn = !lightsOn;
 }
 
+void Room::SetDrawArea(Rectangle area) {
+    drawArea = area;
+    camera.offset = { area.width / 2.0f, area.height / 2.0f };
+
+    float cameraViewWidth = drawArea.width / camera.zoom;
+    float minCameraX = cameraViewWidth / 2.0f;
+    float maxCameraX = width - cameraViewWidth / 2.0f;
+
+    if (camera.target.x < minCameraX) camera.target.x = minCameraX;
+    if (camera.target.x > maxCameraX) camera.target.x = maxCameraX;
+}
+
+Rectangle Room::GetDrawArea() const {
+    return drawArea;
+}
+
 std::vector<std::string> Room::GetFurnitureNames() const {
     std::vector<std::string> names;
     for (const auto& furniture : furnitureList) {
@@ -133,6 +161,10 @@ std::vector<std::string> Room::GetFurnitureNames() const {
 
 Furniture* Room::GetFurnitureAtMousePosition() {
     Vector2 mousePosition = GetMousePosition();
+
+    if (!CheckCollisionPointRec(mousePosition, drawArea)) {
+        return nullptr;
+    }
 
     Vector2 worldPos = GetScreenToWorld2D(mousePosition, camera);
 
@@ -161,8 +193,9 @@ void Room::Update() {
     float targetCameraX = camera.target.x + mouseOffsetX * cameraSensitivity * 200;
 
     float cameraWidth = GetScreenWidth() / camera.zoom;
-    float minCameraX = 0;
-    float maxCameraX = width - cameraWidth;
+    
+    float minCameraX = drawArea.width - drawArea.x;
+    float maxCameraX = width - drawArea.x;
 
     if (targetCameraX < minCameraX) targetCameraX = minCameraX;
     if (targetCameraX > maxCameraX) targetCameraX = maxCameraX;
@@ -172,94 +205,37 @@ void Room::Update() {
     hoveredFurniture = GetFurnitureAtMousePosition();
 }
 
+
 void Room::Draw() {
+    BeginScissorMode((int)drawArea.x, (int)drawArea.y, (int)drawArea.width, (int)drawArea.height);
+
     BeginMode2D(camera);
 
-    float percentWallDown = 0.25f;
-    float percentFloor = 0.15f;
-    float percentWallTop = 1.0f - percentWallDown - percentFloor;
-
-    float heightWallTop = height * percentWallTop;
-    float heightWallDown = height * percentWallDown;
-    float heightFloor = height * percentFloor;
-
-    // struct TextureData {
-    //     Texture2D& texture;
-    //     float height;
-    //     float yPosition;
-    // };
-
-    // TextureData textures[] = {
-    //     {textureWallTop, heightWallTop, 0},
-    //     {textureWallDown, heightWallDown, heightWallTop},
-    //     {textureFloor, heightFloor, heightWallTop + heightWallDown}
-    // };
-
-    // float tileWidths[3];
-    // float scales[3];
-    
-    // for (int j = 0; j < 3; j++) {
-    //     scales[j] = textures[j].height / textures[j].texture.height;
-    //     tileWidths[j] = textures[j].texture.width * scales[j];
-    // }
-
-    // float minTileWidth = std::min(std::min(tileWidths[0], tileWidths[1]), tileWidths[2]);
-    // int maxTiles = (int)ceil(width / minTileWidth);
-
-    // for (int i = 0; i <= maxTiles; i++) {
-    //     for (int j = 0; j < 3; j++) {
-    //         float x = i * tileWidths[j];
-    //         if (x < width) {
-    //             float currentDestWidth = (x + tileWidths[j] > width) ? width - x : tileWidths[j];
-    //             float sourceWidthRatio = currentDestWidth / tileWidths[j];
-    //             float currentSourceWidth = textures[j].texture.width * sourceWidthRatio;
-                
-    //             Rectangle sourceRec;
-    //             Rectangle destRec = {x, textures[j].yPosition, currentDestWidth, textures[j].height};
-
-    //             if (i % 2 == 1) {
-    //                 sourceRec = {(float)textures[j].texture.width, 0, -currentSourceWidth, (float)textures[j].texture.height};
-    //             } else {
-    //                 sourceRec = {0, 0, currentSourceWidth, (float)textures[j].texture.height};
-    //             }
-                
-    //             DrawTexturePro(textures[j].texture, sourceRec, destRec, {0,0}, 0.0f, WHITE);
-    //         }
-    //     }
-    // }
-
     DrawRectangle(0, 0, width, height, GRAY);
-    
-    float indent = 20.0f;
-    Rectangle roomBounds = {-1, -1, width + 2, height + 2};
-    Rectangle frameBounds = {-indent, -indent, width + 2*indent, height + 2*indent};
-    DrawRectangleLinesEx(frameBounds, indent, DARKGRAY);
-    DrawRectangleLinesEx(frameBounds, 1, BLACK);
-    DrawRectangleLinesEx(roomBounds, 1, BLACK);
+    DrawCircle(camera.target.x, camera.target.y, 10, RED);
 
     float centerX = camera.target.x;
-    float tolerance = -0.3f;
-    DrawCircle(centerX, camera.target.y, 5, RED);
 
     for (const auto& furniture : furnitureList) {
         float furnitureX = furniture->GetPosition().x;
         float furnitureWidth = furniture->GetSize().x;
 
         int side;
-        if (centerX < furnitureX - tolerance * furnitureWidth) {
+        if (centerX < furnitureX + 0.3f * furnitureWidth) {
             side = 0;
-        } else if (centerX > furnitureX + furnitureWidth + tolerance * furnitureWidth) {
+        } else if (centerX > furnitureX + furnitureWidth - 0.3f * furnitureWidth) {
             side = 2;
         } else {
             side = 1;
         }
         
         furniture->Draw(side);
-        }
+    }
 
     EndMode2D();
+    EndScissorMode();
 
-    if (hoveredFurniture != nullptr) {
+    if (hoveredFurniture != nullptr && lightsOn) {
         Vector2 mousePos = GetMousePosition();
         std::string name = hoveredFurniture->GetName();
 
@@ -267,9 +243,22 @@ void Room::Draw() {
         int padding = 8;
         Vector2 textSize = MeasureTextEx(font, name.c_str(), fontSize, 1);
 
+        float tooltipX = mousePos.x;
+        float tooltipY = mousePos.y - textSize.y - padding - 5;
+
+        if (tooltipY < drawArea.y) {
+            tooltipY = mousePos.y + 20;
+        }
+        if (tooltipX + textSize.x + padding * 2 > drawArea.x + drawArea.width) {
+            tooltipX = drawArea.x + drawArea.width - textSize.x - padding * 2;
+        }
+        if (tooltipX < drawArea.x) {
+            tooltipX = drawArea.x;
+        }
+
         Rectangle bgRect = {
-            mousePos.x - padding,
-            mousePos.y - textSize.y - padding - 5,
+            tooltipX,
+            tooltipY,
             textSize.x + padding * 2,
             textSize.y + padding * 2
         };
@@ -278,7 +267,7 @@ void Room::Draw() {
         DrawRectangleLinesEx(bgRect, 1, WHITE);
 
         DrawTextEx(font, name.c_str(), 
-                  {mousePos.x - textSize.x/2, mousePos.y - textSize.y - padding - 5}, 
-                  fontSize, 1, WHITE);
+                {tooltipX + padding, tooltipY + padding}, 
+                fontSize, 1, WHITE);
     }
 }

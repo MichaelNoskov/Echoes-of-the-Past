@@ -8,7 +8,15 @@ Game::Game(int startDay) : day(startDay) {
     roomShader = LoadShader(0, "res/shaders/room_shader.fs");
     roomTarget = LoadRenderTexture(600 * 5, 600 * 2);
 
-    curentRoom = std::make_unique<Room>(600*5, 600);
+    Rectangle roomArea = {
+        (GetScreenWidth() - 800) / 2.0f,
+        (GetScreenHeight() - 600) / 2.0f,
+        1000.0f,
+        600.0f
+    };
+
+    curentRoom = std::make_unique<Room>(600*5, 600, "res/config.json", roomArea);
+
     curentRoom->AddFurniture(std::make_unique<Furniture>(
         "res/textures/furniture/монитор.PNG",
         "res/textures/furniture/монитор_л.PNG",
@@ -20,6 +28,12 @@ Game::Game(int startDay) : day(startDay) {
         "res/textures/furniture/стол_л.PNG",
         "res/textures/furniture/стол_п.PNG",
         500.0f, 300.0f, 700.0f, 600.0f, "Table"
+    ));
+    curentRoom->AddFurniture(std::make_unique<Furniture>(
+        "res/textures/furniture/шкаф.PNG",
+        "res/textures/furniture/шкаф_л.PNG",
+        "res/textures/furniture/шкаф_п.PNG",
+        500.0f, 300.0f, 600.0f * 5 - 700, 600.0f, "???"
     ));
 }
 
@@ -36,9 +50,11 @@ void Game::Update() {
 
 }
 
-void Game::Draw(){
+void Game::Draw() {
+    Vector2 roomSize = curentRoom->GetSize();
 
     BeginTextureMode(roomTarget);
+        ClearBackground(BLACK);
         curentRoom->Draw();
     EndTextureMode();
 
@@ -46,11 +62,21 @@ void Game::Draw(){
     float lightsOnValue = curentRoom->AreLightsOn() ? 1.0f : 0.0f;
     SetShaderValue(roomShader, lightsOnLocation, &lightsOnValue, SHADER_UNIFORM_FLOAT);
 
+    Rectangle roomArea = curentRoom->GetDrawArea();
+
+    BeginScissorMode((int)roomArea.x, (int)roomArea.y, (int)roomArea.width, (int)roomArea.height);
+    
     BeginShaderMode(roomShader);
         DrawTextureRec(roomTarget.texture, 
             (Rectangle){0, 0, (float)roomTarget.texture.width, (float)-roomTarget.texture.height},
             (Vector2){0, 0}, WHITE);
     EndShaderMode();
+    
+    EndScissorMode();
+
+    DrawRectangleLinesEx(roomArea, 2, RED);
+
+    DrawText("Click to toggle lights", 10, 10, 20, LIGHTGRAY);
 }
 
 void Game::ChangeRoom(std::unique_ptr<Room> newRoom) {
