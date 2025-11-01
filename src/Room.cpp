@@ -16,8 +16,8 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, R
     drawArea = area;
 
     camera = { 0 };
-    camera.target = { drawArea.width / 2.0f, drawArea.height / 2.0f };
-    camera.offset = { drawArea.width, drawArea.height };
+    camera.target = { drawArea.x, drawArea.height / 2.0f };
+    camera.offset = { drawArea.width / 2.0f + drawArea.x, drawArea.height };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -194,8 +194,8 @@ void Room::Update() {
 
     float cameraWidth = GetScreenWidth() / camera.zoom;
     
-    float minCameraX = drawArea.width - drawArea.x;
-    float maxCameraX = width - drawArea.x;
+    float minCameraX = drawArea.width / 2.0f;
+    float maxCameraX = width - drawArea.width / 2.0f;
 
     if (targetCameraX < minCameraX) targetCameraX = minCameraX;
     if (targetCameraX > maxCameraX) targetCameraX = maxCameraX;
@@ -212,7 +212,6 @@ void Room::Draw() {
     BeginMode2D(camera);
 
     DrawRectangle(0, 0, width, height, GRAY);
-    DrawCircle(camera.target.x, camera.target.y, 10, RED);
 
     float centerX = camera.target.x;
 
@@ -221,19 +220,25 @@ void Room::Draw() {
         float furnitureWidth = furniture->GetSize().x;
 
         int side;
-        if (centerX < furnitureX + 0.3f * furnitureWidth) {
+        if (centerX < furnitureX + 0.2f * furnitureWidth) {
             side = 0;
-        } else if (centerX > furnitureX + furnitureWidth - 0.3f * furnitureWidth) {
+        } else if (centerX > furnitureX + furnitureWidth - 0.2f * furnitureWidth) {
             side = 2;
         } else {
             side = 1;
         }
         
         furniture->Draw(side);
+
+        // DrawCircle(furnitureX + 0.2f * furnitureWidth, camera.target.y, 10, RED);
+        // DrawCircle(furnitureX + furnitureWidth - 0.2f * furnitureWidth, camera.target.y, 10, RED);
+        // DrawCircle(camera.target.x, camera.target.y, 10, GREEN);
+        // DrawCircle(drawArea.height/2, drawArea.width/2, 10, DARKBLUE);
     }
 
     EndMode2D();
     EndScissorMode();
+    DrawRectangleLinesEx(drawArea, 5, BLACK);
 
     if (hoveredFurniture != nullptr && lightsOn) {
         Vector2 mousePos = GetMousePosition();
