@@ -227,11 +227,11 @@ void Room::Update() {
 
     hoveredFurniture = GetFurnitureAtMousePosition();
 
-    if (lightsOn && hoveredFurniture != nullptr && IsMouseButtonDown(MOUSE_LEFT_BUTTON) && handItem == nullptr) {
+    if (lightsOn && hoveredFurniture != nullptr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && handItem == nullptr) {
         handItem = hoveredFurniture;
         handItem->Drag(true);
         moveToBack(furnitureList, handItem);
-    } else if (!IsMouseButtonDown(MOUSE_LEFT_BUTTON) && handItem != nullptr && !handItem->GetCollisioning()) {
+    } else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && handItem != nullptr && !handItem->GetCollisioning()) {
         handItem->Drag(false);
         handItem = nullptr;
     }
