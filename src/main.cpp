@@ -3,13 +3,16 @@
 
 int main() {
     SetTargetFPS(60);
-    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
-    int windowWidth = GetScreenWidth();
-    int windowHeight = GetScreenHeight();
+    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_FULLSCREEN_MODE);
+
+    int monitor = GetCurrentMonitor();
+    int windowWidth = GetMonitorWidth(monitor);
+    int windowHeight = GetMonitorHeight(monitor);
+    
     InitWindow(windowWidth, windowHeight, "Game with Random Room Background");
 
     float loadingTime = 0;
-    while (loadingTime < 1.0f) {
+    while (loadingTime < 2.0f) {
         loadingTime += GetFrameTime();
 
         BeginDrawing();
@@ -34,6 +37,10 @@ int main() {
     Game game;
 
     while (!WindowShouldClose()) {
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            break;
+        }
+        
         game.Update();
 
         BeginDrawing();
