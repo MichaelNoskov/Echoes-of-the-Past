@@ -21,7 +21,7 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, R
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    cameraSensitivity = 5.0f;
+    cameraSensitivity = 2.0f;
     cameraSmoothness = 5.0f;
 
     std::ifstream configFile(configPath);
@@ -241,7 +241,7 @@ void Room::Draw() {
     EndScissorMode();
     DrawRectangleLinesEx(drawArea, 5, BLACK);
 
-    if (hoveredFurniture != nullptr && lightsOn) {
+    if ((hoveredFurniture != nullptr && lightsOn)) {
         Vector2 mousePos = GetMousePosition();
         std::string name = hoveredFurniture->GetName();
 

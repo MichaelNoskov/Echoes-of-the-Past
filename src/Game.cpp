@@ -6,6 +6,11 @@
 
 Game::Game(int startDay) : day(startDay) {
     roomShader = LoadShader(0, "res/shaders/room_shader.fs");
+    int flashlightPosLoc = GetShaderLocation(roomShader, "flashlightPos");
+    // int flashlightRadiusLoc = GetShaderLocation(roomShader, "flashlightRadius");
+    // float flashlightRadius = 0.2f;
+    // SetShaderValue(roomShader, flashlightRadiusLoc, &flashlightRadius, SHADER_UNIFORM_FLOAT);
+
     roomTarget = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     float roomWidth = 600*7;
@@ -67,7 +72,18 @@ void Game::Draw() {
     float lightsOnValue = curentRoom->AreLightsOn() ? 1.0f : 0.0f;
     SetShaderValue(roomShader, lightsOnLocation, &lightsOnValue, SHADER_UNIFORM_FLOAT);
 
+    int flashlightPosLoc = GetShaderLocation(roomShader, "flashlightPos");
     Rectangle roomArea = curentRoom->GetDrawArea();
+    Vector2 mousePos = GetMousePosition();
+
+    Vector2 normalizedPos = {
+        (mousePos.x - 100) / GetScreenWidth(),
+        1 - (mousePos.y - 100) / GetScreenHeight()
+    };
+    
+    SetShaderValue(roomShader, flashlightPosLoc, &normalizedPos, SHADER_UNIFORM_VEC2);
+    float screenSize[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
+    SetShaderValue(roomShader, GetShaderLocation(roomShader, "screenSize"), screenSize, SHADER_UNIFORM_VEC2);
 
     BeginScissorMode((int)roomArea.x, (int)roomArea.y, (int)roomArea.width, (int)roomArea.height);
     
