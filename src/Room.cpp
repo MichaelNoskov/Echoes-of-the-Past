@@ -6,6 +6,7 @@
 #include <string>
 #include <nlohmann/json.hpp>
 #include <cstdlib>
+#include <algorithm>
 
 using json = nlohmann::json;
 
@@ -245,10 +246,7 @@ void Room::Update() {
                 break;
             }
         }
-        if (handItem->GetPosition().x < 0 || handItem->GetPosition().x > width - handItem->GetSize().x) {
-            handItem->Collide(true);
-            collide = true;
-        }
+
         if (!collide) {
             handItem->Collide(false);
         }
@@ -257,6 +255,11 @@ void Room::Update() {
         Vector2 furniturePos = handItem->GetPosition();
         Vector2 furnitureSize = handItem->GetSize();
         handItem->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, furniturePos.y);
+
+        Vector2 itemPos = handItem -> GetPosition();
+        handItem->SetPosition(std::max(itemPos.x, 0.0f), itemPos.y);
+        itemPos = handItem -> GetPosition();
+        handItem->SetPosition(std::min(itemPos.x, width - handItem->GetSize().x), itemPos.y);
     }
 }
 
