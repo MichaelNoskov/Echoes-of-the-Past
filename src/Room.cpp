@@ -209,7 +209,13 @@ void Room::Update() {
     camera.target.x += GetFrameTime() * ((targetCameraX - camera.target.x) * cameraSmoothness);
 
     Furniture* newHoveredFurniture = GetFurnitureAtMousePosition();
+    if (newHoveredFurniture != nullptr && IsMouseButtonDown(MOUSE_LEFT_BUTTON)){
+        newHoveredFurniture->Drag(true);
+    }
     if (hoveredFurniture == nullptr || (!IsMouseButtonDown(MOUSE_LEFT_BUTTON) || newHoveredFurniture == nullptr) && newHoveredFurniture != hoveredFurniture) {
+        if (hoveredFurniture != nullptr){
+            hoveredFurniture->Drag(false);
+        }
         hoveredFurniture = newHoveredFurniture;
     }
 

@@ -10,6 +10,8 @@ private:
     float posX;
     float posY;
 
+    bool isDragging = false;
+
     Drawable surface;
 
     std::string name;
@@ -34,6 +36,8 @@ public:
     std::string GetName() const { return name; }
     Rectangle GetBoundingBox() const;
     bool IsPointInside(float x, float y) const;
+    void Drag(bool drag) { isDragging = drag; };
+    bool GetDragging() { return isDragging; };
 };
 
 #endif

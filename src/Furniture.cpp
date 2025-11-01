@@ -28,7 +28,11 @@ Furniture::~Furniture() {
 }
 
 void Furniture::Draw(int side) {
-    surface.Draw(posX, posY, side);
+    if (isDragging) {
+        surface.DrawDragging(posX, posY, side);
+    } else {
+        surface.Draw(posX, posY, side);
+    }
 }
 
 Rectangle Furniture::GetBoundingBox() const {
