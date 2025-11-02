@@ -1,5 +1,6 @@
 #include "Furniture.h"
 #include "Drawable.h"
+#include "Room.h"
 
 
 Furniture::Furniture(
@@ -27,7 +28,7 @@ Furniture::Furniture(
 Furniture::~Furniture() {
 }
 
-void Furniture::Update(){
+void Furniture::Update(Room* room, bool interact){
 }
 
 void Furniture::Draw(int side) {

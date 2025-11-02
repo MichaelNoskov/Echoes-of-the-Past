@@ -287,7 +287,7 @@ void Room::Update() {
         handItem->SetPosition(targetX, targetY);
     }
     for (const auto& furniture : furnitureList) {
-        furniture -> Update();
+        furniture -> Update(this, hoveredFurniture == furniture.get());
     }
 }
 

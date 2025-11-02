@@ -5,6 +5,8 @@
 #include "Drawable.h"
 #include <string>
 
+class Room;
+
 class Furniture {
 private:
     float posX;
@@ -32,16 +34,16 @@ public:
     );
     ~Furniture();
 
-    void Update();
+    virtual void Update(Room* room, bool interact);
 
     void Draw(int side = 1);
-    void SetPosition(float x, float y) { posX = x; posY = y; }
+    virtual void SetPosition(float x, float y) { posX = x; posY = y; }
     Vector2 GetPosition() const { return {posX, posY}; }
     Vector2 GetSize() const { return surface.GetSize(); };
     std::string GetName() const { return name; }
     Rectangle GetBoundingBox() const;
     bool IsPointInside(float x, float y) const;
-    void Drag(bool drag) { isDragging = drag; };
+    virtual void Drag(bool drag) { isDragging = drag; };
     bool GetDragging() { return isDragging; };
     void Collide(bool collision) { isCollisioning = collision; };
     bool GetCollisioning() { return isCollisioning; };

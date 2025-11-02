@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Room.h"
 #include "Furniture.h"
+#include "LightFurniture.h"
 #include <string>
 
 
@@ -45,6 +46,10 @@ Game::Game(int startDay) : day(startDay) {
         "res/textures/furniture/шкаф_п.PNG",
         400.0f, 550.0f, roomWidth - 650, roomHeight, "???"
     ));
+    curentRoom->AddFurniture(std::make_unique<LightFurniture>(
+        "res/textures/furniture/лампа.PNG",
+        90.0f, 108.0f, (roomWidth-108.0f) / 2, 108, "Lamp"
+    ));
 }
 
 Game::Game(int startDay, Room& room) : day(startDay), curentRoom(&room) {}
@@ -55,9 +60,7 @@ Game::~Game() {
 
 void Game::Update() {
     curentRoom->Update();
-    if (IsKeyPressed(KEY_L)) {
-        ToggleRoomLights();
-    } else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
         ToggleRoomFlashLight();
     }
 
@@ -102,17 +105,12 @@ void Game::Draw() {
     
     EndScissorMode();
 
-    DrawText("Press L to toggle lights", 10, 10, 20, LIGHTGRAY);
     DrawText("Right click to toggle flashlight", 10, 40, 20, LIGHTGRAY);
     DrawText("Press left to move furniture", 10, 70, 20, LIGHTGRAY);
 }
 
 void Game::ChangeRoom(std::unique_ptr<Room> newRoom) {
     curentRoom = std::move(newRoom);
-}
-
-void Game::ToggleRoomLights() {
-    curentRoom->ToggleLights();
 }
 
 void Game::ToggleRoomFlashLight() {
