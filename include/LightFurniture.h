@@ -6,8 +6,6 @@
 class Room;
 
 class LightFurniture : public Furniture {
-private:
-    bool wasInteracting = false;
 
 public:
     LightFurniture(
