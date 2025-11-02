@@ -25,11 +25,13 @@ void moveToBack(std::vector<std::unique_ptr<Furniture>>& furniture,
     }
 }
 
-Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area) {
+Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area, Game* gameRef) {
     width = sceneWidth;
     height = sceneHeight;
     lightsOn = true;
     flashlightOn = false;
+    game = gameRef;
+
     drawArea = area;
 
     camera = { 0 };
@@ -97,6 +99,7 @@ Vector2 Room::RoomToScreenSpace(Vector2 roomPos) const {
 }
 
 void Room::AddFurniture(std::unique_ptr<Furniture> furniture) {
+    furniture->setRoom(this);
     furnitureList.push_back(std::move(furniture));
 }
 
@@ -289,7 +292,7 @@ void Room::Update() {
         handItem->SetPosition(targetX, targetY);
     }
     for (const auto& furniture : furnitureList) {
-        furniture -> Update(this, hoveredFurniture == furniture.get());
+        furniture -> Update(hoveredFurniture == furniture.get());
     }
 }
 

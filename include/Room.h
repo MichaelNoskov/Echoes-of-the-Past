@@ -7,12 +7,16 @@
 #include <memory>
 #include "Furniture.h"
 
+class Game;
+
 class Room {
 private:
     float height;
     float width;
     bool lightsOn;
     bool flashlightOn;
+    Game* game;
+
     Rectangle drawArea;
     Texture2D textureWallTop;
     Texture2D textureWallDown;
@@ -31,12 +35,14 @@ private:
     Vector2 RoomToScreenSpace(Vector2 roomPos) const;
 
 public:
-    Room(float sceneWidth, float sceneHeight, const std::string& configPath);
-    Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area);
+    Room(float sceneWidth, float sceneHeight, const std::string& configPath, Game* gameRef = nullptr);
+    Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area, Game* gameRef = nullptr);
     ~Room();
     
     void Update();
     void Draw();
+    Game* GetGame() const { return game; }
+
     Camera2D& GetCamera() { return camera; }
 
     void SetDrawArea(Rectangle area);

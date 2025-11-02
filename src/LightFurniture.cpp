@@ -17,15 +17,15 @@ LightFurniture::LightFurniture(
 ) : Furniture(textureFrontPath, textureLeftPath, textureRightPath, width, height, x, y, furnitureName, false) {
 }
 
-void LightFurniture::Update(Room* room, bool interact) {
-    Furniture::Update(room, interact);
+void LightFurniture::Update(bool interact) {
+    Furniture::Update(interact);
 
     if (!interact) {
         return;
     }
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-        room -> ToggleLights();
+        Furniture::getRoom() -> ToggleLights();
     }
 
 }

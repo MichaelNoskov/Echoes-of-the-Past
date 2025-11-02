@@ -22,7 +22,7 @@ public:
         const std::string& furnitureName = ""
     );
     
-    void Update(Room* room, bool interact) override;
+    void Update(bool interact) override;
     void SetPosition(float x, float y) override { return; };
     void Drag(bool drag) override { return; };
 };

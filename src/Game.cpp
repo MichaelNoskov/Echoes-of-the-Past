@@ -2,7 +2,10 @@
 #include "Room.h"
 #include "Furniture.h"
 #include "LightFurniture.h"
+#include "Clock.h"
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 
 Game::Game(int startDay) : day(startDay) {
@@ -26,7 +29,7 @@ Game::Game(int startDay) : day(startDay) {
         roomHeight
     };
 
-    curentRoom = std::make_unique<Room>(roomWidth, roomHeight, "res/config.json", roomArea);
+    curentRoom = std::make_unique<Room>(roomWidth, roomHeight, "res/config.json", roomArea, this);
 
     curentRoom->AddFurniture(std::make_unique<Furniture>(
         "res/textures/furniture/монитор.PNG",
@@ -46,6 +49,16 @@ Game::Game(int startDay) : day(startDay) {
         "res/textures/furniture/шкаф_п.PNG",
         400.0f, 550.0f, roomWidth - 650, roomHeight, "???", true
     ));
+    curentRoom->AddFurniture(std::make_unique<Clock>(
+        "res/textures/furniture/часы.PNG",
+        "res/textures/furniture/часы_л.PNG",
+        "res/textures/furniture/часы_п.PNG",
+        "res/textures/furniture/маятник.PNG",
+        "res/textures/furniture/маятник_л.PNG",
+        "res/textures/furniture/маятник_п.PNG",
+        50.0f, 100.0f, Vector2{0, 0}, Vector2{0, 0}, 10.0f,
+        170.0f, 250.0f, roomWidth - 650, roomHeight, "Clock"
+    ));
     curentRoom->AddFurniture(std::make_unique<LightFurniture>(
         "res/textures/furniture/лампа.PNG",
         90.0f, 108.0f, (roomWidth-108.0f) / 2, 108, "Lamp"
@@ -59,6 +72,9 @@ Game::~Game() {
 }
 
 void Game::Update() {
+    float timeScale = 1.0f / (24.0f * 60.0f);
+    AddTime(GetFrameTime() * timeScale);
+
     curentRoom->Update();
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
         ToggleRoomFlashLight();
@@ -115,4 +131,32 @@ void Game::ChangeRoom(std::unique_ptr<Room> newRoom) {
 
 void Game::ToggleRoomFlashLight() {
     curentRoom->ToggleFlashLight();
+}
+
+int Game::GetHours() const {
+    return static_cast<int>(time * 24) % 24;
+}
+
+int Game::GetMinutes() const {
+    float totalMinutes = time * 24 * 60;
+    return static_cast<int>(totalMinutes) % 60;
+}
+
+std::string Game::GetTimeString() const {
+    int hours = GetHours();
+    int minutes = GetMinutes();
+    
+    std::ostringstream timeStr;
+    timeStr << std::setw(2) << std::setfill('0') << hours << ":"
+            << std::setw(2) << std::setfill('0') << minutes;
+    
+    return timeStr.str();
+}
+
+void Game::AddTime(float delta) {
+    time += delta;
+    if (time >= 1.0f) {
+        time -= 1.0f;
+        day++;
+    }
 }

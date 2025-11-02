@@ -11,6 +11,7 @@ class Furniture {
 private:
     float posX;
     float posY;
+    Room* room;
 
     bool isPedestal = false;
 
@@ -49,7 +50,7 @@ public:
     ~Furniture();
 
     // метод для обаботки событий внутри мебели
-    virtual void Update(Room* room, bool interact);
+    virtual void Update(bool interact);
 
     // отрисовка
     virtual void Draw(int side = 1);
@@ -128,6 +129,9 @@ public:
         }
         printf("%d\n", riders);
     }
+
+    Room* getRoom() { return room; };
+    void setRoom(Room* newRoom) { room = newRoom; };
 };
 
 #endif

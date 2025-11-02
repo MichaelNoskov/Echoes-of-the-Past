@@ -22,8 +22,13 @@ public:
     void Update();
     void Draw();
 
-    void ToggleRoomLights();
     void ToggleRoomFlashLight();
+
+    float GetTime() const { return time; }
+    int GetHours() const;
+    int GetMinutes() const;
+    std::string GetTimeString() const;
+    void AddTime(float delta);
 };
 
 #endif

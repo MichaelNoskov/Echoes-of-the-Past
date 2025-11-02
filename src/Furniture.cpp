@@ -30,7 +30,7 @@ Furniture::Furniture(
 Furniture::~Furniture() {
 }
 
-void Furniture::Update(Room* room, bool interact){
+void Furniture::Update(bool interact){
 }
 
 void Furniture::Draw(int side) {
