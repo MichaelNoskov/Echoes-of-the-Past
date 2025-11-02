@@ -286,6 +286,9 @@ void Room::Update() {
         float targetY = std::max(posY, furnitureSize.y);
         handItem->SetPosition(targetX, targetY);
     }
+    for (const auto& furniture : furnitureList) {
+        furniture -> Update();
+    }
 }
 
 void Room::Draw() {

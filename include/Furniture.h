@@ -32,6 +32,8 @@ public:
     );
     ~Furniture();
 
+    void Update();
+
     void Draw(int side = 1);
     void SetPosition(float x, float y) { posX = x; posY = y; }
     Vector2 GetPosition() const { return {posX, posY}; }

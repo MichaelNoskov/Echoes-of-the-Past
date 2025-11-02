@@ -27,6 +27,9 @@ Furniture::Furniture(
 Furniture::~Furniture() {
 }
 
+void Furniture::Update(){
+}
+
 void Furniture::Draw(int side) {
     if (isCollisioning) {
         surface.DrawCollisioning(posX, posY, side);
