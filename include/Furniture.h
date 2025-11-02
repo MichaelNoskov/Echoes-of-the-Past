@@ -52,7 +52,7 @@ public:
     virtual void Update(Room* room, bool interact);
 
     // отрисовка
-    void Draw(int side = 1);
+    virtual void Draw(int side = 1);
 
     // установить позицию
     virtual void SetPosition(float x, float y) { posX = x; posY = y; }
@@ -65,6 +65,9 @@ public:
 
     // имя
     std::string GetName() const { return name; }
+
+    // подпись
+    virtual std::string GetText() { return name; }
 
     // хитбокс
     Rectangle GetBoundingBox() const;

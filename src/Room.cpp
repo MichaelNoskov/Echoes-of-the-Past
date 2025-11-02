@@ -329,11 +329,11 @@ void Room::Draw() {
 
     if (hoveredFurniture != nullptr && (lightsOn || flashlightOn)) {
         Vector2 mousePos = GetMousePosition();
-        std::string name = hoveredFurniture->GetName();
+        std::string signature = hoveredFurniture->GetText();
 
         int fontSize = 20;
         int padding = 8;
-        Vector2 textSize = MeasureTextEx(font, name.c_str(), fontSize, 1);
+        Vector2 textSize = MeasureTextEx(font, signature.c_str(), fontSize, 1);
 
         float tooltipX = mousePos.x;
         float tooltipY = mousePos.y - textSize.y - padding - 5;
@@ -358,7 +358,7 @@ void Room::Draw() {
         DrawRectangleRec(bgRect, Fade(BLACK, 0.7f));
         DrawRectangleLinesEx(bgRect, 1, WHITE);
 
-        DrawTextEx(font, name.c_str(), 
+        DrawTextEx(font, signature.c_str(), 
                 {tooltipX + padding, tooltipY + padding}, 
                 fontSize, 1, WHITE);
     }
