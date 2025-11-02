@@ -66,7 +66,7 @@ void Clock::Draw(int side) {
     float time = Furniture::getRoom()->GetGame()->GetTime();
     float normalizedTime = fmodf(time, 1.0f);
 
-    float angle = (normalizedTime - 0.25f) * 2.0f * M_PI;
+    float angle = (normalizedTime * 2 - 0.25f) * 2.0f * M_PI;
 
     Vector2 screenArrowPos = {
         furniturePos.x + arrowPosition.x * scaleX,
