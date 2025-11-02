@@ -46,12 +46,6 @@ void Clock::Update(bool interact) {
 
 void Clock::Draw(int side) {
     Furniture::Draw(side);
-    pendulum.Draw(pendulumPosition.x, pendulumPosition.y, side);
-
-    float time = Furniture::getRoom()->GetGame()->GetTime();
-    float normalizedTime = fmodf(time, 1.0f);
-
-    float angle = (normalizedTime - 0.25f) * 2.0f * M_PI;
 
     Vector2 furniturePos = GetPosition();
     Vector2 furnitureSize = GetSize();
@@ -61,6 +55,18 @@ void Clock::Draw(int side) {
 
     float scaleX = furnitureSize.x / textureWidth;
     float scaleY = furnitureSize.y / textureHeight;
+
+    Vector2 screenPendulumPos = {
+        furniturePos.x + pendulumPosition.x * furnitureSize.x,
+        furniturePos.y - furnitureSize.y + pendulumPosition.y * furnitureSize.y + pendulum.GetSize().y
+    };
+
+    pendulum.Draw(screenPendulumPos.x, screenPendulumPos.y, side);
+
+    float time = Furniture::getRoom()->GetGame()->GetTime();
+    float normalizedTime = fmodf(time, 1.0f);
+
+    float angle = (normalizedTime - 0.25f) * 2.0f * M_PI;
 
     Vector2 screenArrowPos = {
         furniturePos.x + arrowPosition.x * scaleX,
@@ -80,9 +86,8 @@ void Clock::Draw(int side) {
         screenArrowPos.y + sinf(angle) * screenArrowSize
     };
 
-    DrawLineEx(adjustedStartPos, endPoint, arrowWidth, (Color){ 50, 50, 50, 255 }  );
+    DrawLineEx(adjustedStartPos, endPoint, arrowWidth, (Color){ 50, 50, 50, 255 } );
 };
-
 
 std::string Clock::GetText() {
     return Furniture::GetName() + "\n\n" + Furniture::getRoom()->GetGame()->GetTimeString();

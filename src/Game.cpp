@@ -56,7 +56,7 @@ Game::Game(int startDay) : day(startDay) {
         "res/textures/furniture/маятник.PNG",
         "res/textures/furniture/маятник_л.PNG",
         "res/textures/furniture/маятник_п.PNG",
-        50.0f, 100.0f, Vector2{0, 0}, Vector2{16.5f, 23.5f}, 4.0f,
+        15.0f, 46.0f, Vector2{0.454545f, 0.547169f}, Vector2{16.5f, 23.5f}, 4.0f,
         170.0f, 250.0f, roomWidth - 650, roomHeight, "Clock"
     ));
     curentRoom->AddFurniture(std::make_unique<LightFurniture>(
