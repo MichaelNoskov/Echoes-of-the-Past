@@ -1,6 +1,7 @@
 #include "Clock.h"
 #include "Room.h"
 #include "Game.h"
+#include <cmath>
 
 Clock::Clock(
     const std::string& texturePath,
@@ -46,8 +47,43 @@ void Clock::Update(bool interact) {
 void Clock::Draw(int side) {
     Furniture::Draw(side);
     pendulum.Draw(pendulumPosition.x, pendulumPosition.y, side);
+
+    float time = Furniture::getRoom()->GetGame()->GetTime();
+    float normalizedTime = fmodf(time, 1.0f);
+
+    float angle = (normalizedTime - 0.25f) * 2.0f * M_PI;
+
+    Vector2 furniturePos = GetPosition();
+    Vector2 furnitureSize = GetSize();
+
+    float textureWidth = 33.0f;
+    float textureHeight = 53.0f;
+
+    float scaleX = furnitureSize.x / textureWidth;
+    float scaleY = furnitureSize.y / textureHeight;
+
+    Vector2 screenArrowPos = {
+        furniturePos.x + arrowPosition.x * scaleX,
+        furniturePos.y - furnitureSize.y + arrowPosition.y * scaleY
+    };
+
+    float screenArrowSize = arrowSize * std::max(scaleX, scaleY);
+    float arrowWidth = .05f * screenArrowSize * std::max(scaleX, scaleY);
+
+    Vector2 adjustedStartPos = {
+        screenArrowPos.x + cosf(angle) * (arrowWidth / 2.0f),
+        screenArrowPos.y + sinf(angle) * (arrowWidth / 2.0f)
+    };
+
+    Vector2 endPoint = {
+        screenArrowPos.x + cosf(angle) * screenArrowSize,
+        screenArrowPos.y + sinf(angle) * screenArrowSize
+    };
+
+    DrawLineEx(adjustedStartPos, endPoint, arrowWidth, (Color){ 50, 50, 50, 255 }  );
 };
 
+
 std::string Clock::GetText() {
-    return Furniture::GetName() + "\n\n======\n" + Furniture::getRoom()->GetGame()->GetTimeString() + "\n======";
+    return Furniture::GetName() + "\n\n" + Furniture::getRoom()->GetGame()->GetTimeString();
 }
