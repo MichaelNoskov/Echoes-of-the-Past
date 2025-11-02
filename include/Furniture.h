@@ -12,6 +12,8 @@ private:
 
     bool isDragging = false;
     bool isCollisioning = false;
+    bool freezed = false;
+    int riders = 0;
     Furniture* pedestal = nullptr;
 
     Drawable surface;
@@ -44,8 +46,23 @@ public:
     void setPedestal(Furniture* newPedestal) { pedestal = newPedestal; };
     Furniture* GetPedestal() { return pedestal; };
     bool GetOnPedestal() { return pedestal != nullptr; };
+    bool GetFreeze() { return freezed; };
+    void Freeze() { freezed = true; };
+    void Unfreeze() { freezed = false; };
     bool IntersectsWithArea(const Rectangle& area) const;
     bool IntersectsWith(const Furniture& other) const;
+    void addItem() {
+        riders += 1;
+        freezed = true;
+        printf("%d\n", riders);
+    }
+    void removeItem() {
+        riders -= 1;
+        if (riders <= 0) {
+            freezed = false;
+        }
+        printf("%d\n", riders);
+    }
 };
 
 #endif

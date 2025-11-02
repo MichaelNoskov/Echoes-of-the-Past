@@ -37,7 +37,7 @@ Game::Game(int startDay) : day(startDay) {
         "res/textures/furniture/стол.PNG",
         "res/textures/furniture/стол_л.PNG",
         "res/textures/furniture/стол_п.PNG",
-        425.0f, 255.0f, 700.0f, roomHeight, "Table"
+        625.0f, 255.0f, 700.0f, roomHeight, "Table"
     ));
     curentRoom->AddFurniture(std::make_unique<Furniture>(
         "res/textures/furniture/шкаф.PNG",

@@ -202,84 +202,90 @@ Furniture* Room::GetFurnitureAtMousePosition() {
 }
 
 void Room::Update() {
-    Vector2 mousePosition = GetMousePosition();
+    const Vector2 mousePosition = GetMousePosition();
 
-    float relativeMouseX = mousePosition.x - drawArea.x;
-    float centerX = drawArea.width / 2.0f;
+    const float relativeMouseX = mousePosition.x - drawArea.x;
+    const float centerX = drawArea.width * 0.5f;
     
-    float mouseOffsetX = 0;
-    if (relativeMouseX < drawArea.width * 0.3f)
-        mouseOffsetX = (relativeMouseX - drawArea.width * 0.3f) / centerX;
-    else if (relativeMouseX > drawArea.width * 0.7f)
-        mouseOffsetX = (relativeMouseX - drawArea.width * 0.7f) / centerX;
+    float mouseOffsetX = 0.0f;
+    const float lowThreshold = drawArea.width * 0.3f;
+    const float highThreshold = drawArea.width * 0.7f;
+    
+    if (relativeMouseX < lowThreshold) {
+        mouseOffsetX = (relativeMouseX - lowThreshold) / centerX;
+    } else if (relativeMouseX > highThreshold) {
+        mouseOffsetX = (relativeMouseX - highThreshold) / centerX;
+    }
 
-    float targetCameraX = camera.target.x + mouseOffsetX * cameraSensitivity * 200;
+    const float cameraViewWidth = drawArea.width / camera.zoom;
+    const float minCameraX = drawArea.width * 0.5f;
+    const float maxCameraX = width - minCameraX;
 
-    float cameraViewWidth = drawArea.width / camera.zoom;
+    float targetCameraX = camera.target.x + mouseOffsetX * cameraSensitivity * 200.0f;
+    targetCameraX = std::clamp(targetCameraX, minCameraX, maxCameraX);
 
-    float minCameraX = drawArea.width / 2.0f;
-    float maxCameraX = width - drawArea.width / 2.0f;
-
-    if (targetCameraX < minCameraX) targetCameraX = minCameraX;
-    if (targetCameraX > maxCameraX) targetCameraX = maxCameraX;
-
-    camera.target.x += GetFrameTime() * ((targetCameraX - camera.target.x) * cameraSmoothness);
+    const float frameTime = GetFrameTime();
+    camera.target.x += frameTime * ((targetCameraX - camera.target.x) * cameraSmoothness);
 
     hoveredFurniture = GetFurnitureAtMousePosition();
 
-    if (lightsOn && hoveredFurniture != nullptr && IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && handItem == nullptr) {
+    const bool leftMousePressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+    
+    if (lightsOn && hoveredFurniture && leftMousePressed && !handItem && !hoveredFurniture->GetFreeze()) {
         handItem = hoveredFurniture;
         handItem->Drag(true);
         moveToBack(furnitureList, handItem);
-    } else if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && handItem != nullptr && !handItem->GetCollisioning()) {
+    } else if (leftMousePressed && handItem && !handItem->GetCollisioning()) {
         handItem->Drag(false);
         handItem = nullptr;
     }
 
-    if (handItem != nullptr) {
+    if (handItem) {
         bool collide = false;
         float posY = height;
-        if (handItem->GetOnPedestal()){
-            Vector2 itemPosition = handItem->GetPosition();
-            float itemWeigth = handItem -> GetSize().x;
+
+        if (handItem->GetOnPedestal()) {
+            const Vector2 itemPosition = handItem->GetPosition();
+            const float itemWidth = handItem->GetSize().x;
             Furniture* pedestal = handItem->GetPedestal();
-            float pedestalWeigth = pedestal -> GetSize().x;
-            float pedestalX = handItem->GetPedestal()->GetPosition().x;
+            const float pedestalWidth = pedestal->GetSize().x;
+            const float pedestalX = pedestal->GetPosition().x;
+            
             posY = itemPosition.y;
-            if (itemPosition.x + itemWeigth < pedestalX || itemPosition.x > pedestalX + pedestalWeigth){
+            
+            if (itemPosition.x + itemWidth < pedestalX || itemPosition.x > pedestalX + pedestalWidth) {
                 handItem->setPedestal(nullptr);
-            } else if (itemPosition.x + itemWeigth*0.25f < pedestalX || itemPosition.x + itemWeigth*0.75f > pedestalX + pedestalWeigth) {
+                pedestal->removeItem();
+            } else if (itemPosition.x + itemWidth * 0.25f < pedestalX || 
+                      itemPosition.x + itemWidth * 0.75f > pedestalX + pedestalWidth) {
                 collide = true;
-            } else if (pedestalWeigth < itemWeigth) collide = true;
+            }
         }
+
         for (const auto& furniture : furnitureList) {
             if (handItem == furniture.get()) continue;
+            
             if (handItem->IntersectsWith(*furniture)) {
                 posY = furniture->GetPosition().y - furniture->GetSize().y;
                 handItem->setPedestal(furniture.get());
+                furniture->addItem();
                 collide = true;
                 break;
             }
         }
 
-        if (collide) {
-            handItem->Collide(true);
-        } else {
-            handItem->Collide(false);
-        }
+        handItem->Collide(collide);
 
-        Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
-        Vector2 furniturePos = handItem->GetPosition();
-        Vector2 furnitureSize = handItem->GetSize();
-        handItem->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, posY);
-
-        Vector2 itemPos = handItem -> GetPosition();
-        handItem->SetPosition(std::max(itemPos.x, 0.0f), posY);
-        itemPos = handItem -> GetPosition();
-        handItem->SetPosition(std::min(itemPos.x, width - furnitureSize.x), std::max(posY, furnitureSize.y));
+        const Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+        const Vector2 furnitureSize = handItem->GetSize();
+        
+        float targetX = mouseWorldPos.x - furnitureSize.x * 0.5f;
+        targetX = std::clamp(targetX, 0.0f, width - furnitureSize.x);
+        
+        float targetY = std::max(posY, furnitureSize.y);
+        handItem->SetPosition(targetX, targetY);
     }
 }
-
 
 void Room::Draw() {
     BeginScissorMode((int)drawArea.x, (int)drawArea.y, (int)drawArea.width, (int)drawArea.height);
