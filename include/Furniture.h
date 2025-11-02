@@ -118,7 +118,6 @@ public:
     void addItem() {
         riders += 1;
         freezed = true;
-        printf("%d\n", riders);
     }
 
     // снять предмет сверху
@@ -127,7 +126,6 @@ public:
         if (riders <= 0) {
             freezed = false;
         }
-        printf("%d\n", riders);
     }
 
     Room* getRoom() { return room; };
