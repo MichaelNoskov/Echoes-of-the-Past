@@ -292,7 +292,7 @@ void Room::Update() {
         float targetX = mouseWorldPos.x - furnitureSize.x * 0.7f;
         targetX = std::clamp(targetX, 0.0f, width - furnitureSize.x);
         
-        float targetY = std::max(posY, furnitureSize.y);
+        float targetY = std::clamp(posY, furnitureSize.y, height);
         handItem->SetPosition(targetX, targetY);
     }
     for (const auto& furniture : furnitureList) {
