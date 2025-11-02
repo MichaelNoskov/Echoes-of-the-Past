@@ -234,9 +234,11 @@ void Room::Update() {
     if (lightsOn && hoveredFurniture && leftMousePressed && !handItem && !hoveredFurniture->GetFreeze()) {
         handItem = hoveredFurniture;
         handItem->Drag(true);
+        if (handItem -> GetOnPedestal()) handItem->GetPedestal()->removeItem();
         moveToBack(furnitureList, handItem);
     } else if (leftMousePressed && handItem && !handItem->GetCollisioning()) {
         handItem->Drag(false);
+        if (handItem -> GetOnPedestal()) handItem->GetPedestal()->addItem();
         handItem = nullptr;
     }
 
@@ -255,7 +257,7 @@ void Room::Update() {
             
             if (itemPosition.x + itemWidth < pedestalX || itemPosition.x > pedestalX + pedestalWidth) {
                 handItem->setPedestal(nullptr);
-                pedestal->removeItem();
+                // pedestal->removeItem();
             } else if (itemPosition.x + itemWidth * 0.25f < pedestalX || 
                       itemPosition.x + itemWidth * 0.75f > pedestalX + pedestalWidth) {
                 collide = true;
@@ -268,7 +270,6 @@ void Room::Update() {
             if (handItem->IntersectsWith(*furniture)) {
                 posY = furniture->GetPosition().y - furniture->GetSize().y;
                 handItem->setPedestal(furniture.get());
-                furniture->addItem();
                 collide = true;
                 break;
             }
