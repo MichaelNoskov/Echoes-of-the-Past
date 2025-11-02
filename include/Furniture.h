@@ -12,6 +12,7 @@ private:
 
     bool isDragging = false;
     bool isCollisioning = false;
+    Furniture* pedestal = nullptr;
 
     Drawable surface;
     std::string name;
@@ -40,6 +41,9 @@ public:
     bool GetDragging() { return isDragging; };
     void Collide(bool collision) { isCollisioning = collision; };
     bool GetCollisioning() { return isCollisioning; };
+    void setPedestal(Furniture* newPedestal) { pedestal = newPedestal; };
+    Furniture* GetPedestal() { return pedestal; };
+    bool GetOnPedestal() { return pedestal != nullptr; };
     bool IntersectsWithArea(const Rectangle& area) const;
     bool IntersectsWith(const Furniture& other) const;
 };

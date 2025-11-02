@@ -238,28 +238,45 @@ void Room::Update() {
 
     if (handItem != nullptr) {
         bool collide = false;
+        float posY = height;
+        if (handItem->GetOnPedestal()){
+            Vector2 itemPosition = handItem->GetPosition();
+            float itemWeigth = handItem -> GetSize().x;
+            Furniture* pedestal = handItem->GetPedestal();
+            float pedestalWeigth = pedestal -> GetSize().x;
+            float pedestalX = handItem->GetPedestal()->GetPosition().x;
+            posY = itemPosition.y;
+            if (itemPosition.x + itemWeigth < pedestalX || itemPosition.x > pedestalX + pedestalWeigth){
+                handItem->setPedestal(nullptr);
+            } else if (itemPosition.x + itemWeigth*0.25f < pedestalX || itemPosition.x + itemWeigth*0.75f > pedestalX + pedestalWeigth) {
+                collide = true;
+            } else if (pedestalWeigth < itemWeigth) collide = true;
+        }
         for (const auto& furniture : furnitureList) {
             if (handItem == furniture.get()) continue;
             if (handItem->IntersectsWith(*furniture)) {
-                handItem->Collide(true);
+                posY = furniture->GetPosition().y - furniture->GetSize().y;
+                handItem->setPedestal(furniture.get());
                 collide = true;
                 break;
             }
         }
 
-        if (!collide) {
+        if (collide) {
+            handItem->Collide(true);
+        } else {
             handItem->Collide(false);
         }
 
         Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
         Vector2 furniturePos = handItem->GetPosition();
         Vector2 furnitureSize = handItem->GetSize();
-        handItem->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, furniturePos.y);
+        handItem->SetPosition(mouseWorldPos.x - furnitureSize.x/2.0f, posY);
 
         Vector2 itemPos = handItem -> GetPosition();
-        handItem->SetPosition(std::max(itemPos.x, 0.0f), itemPos.y);
+        handItem->SetPosition(std::max(itemPos.x, 0.0f), posY);
         itemPos = handItem -> GetPosition();
-        handItem->SetPosition(std::min(itemPos.x, width - handItem->GetSize().x), itemPos.y);
+        handItem->SetPosition(std::min(itemPos.x, width - furnitureSize.x), std::max(posY, furnitureSize.y));
     }
 }
 
