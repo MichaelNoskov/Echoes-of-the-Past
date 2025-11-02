@@ -5,7 +5,7 @@ LightFurniture::LightFurniture(
     const std::string& texturePath,
     float width, float height, float x, float y, 
     const std::string& furnitureName
-) : Furniture(texturePath, width, height, x, y, furnitureName) {
+) : Furniture(texturePath, width, height, x, y, furnitureName, false) {
 }
 
 LightFurniture::LightFurniture(
@@ -14,7 +14,7 @@ LightFurniture::LightFurniture(
     const std::string& textureRightPath,
     float width, float height, float x, float y, 
     const std::string& furnitureName
-) : Furniture(textureFrontPath, textureLeftPath, textureRightPath, width, height, x, y, furnitureName) {
+) : Furniture(textureFrontPath, textureLeftPath, textureRightPath, width, height, x, y, furnitureName, false) {
 }
 
 void LightFurniture::Update(Room* room, bool interact) {
