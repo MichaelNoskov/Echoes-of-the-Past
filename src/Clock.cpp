@@ -10,9 +10,9 @@ Clock::Clock(
     Vector2 pendulumPos, Vector2 arrowPos, float arrowLength,
     float width, float height, float x, float y,
     const std::string& furnitureName,
-    bool pedestal
+    bool pedestal, bool canHang
 ) :
-    Furniture(texturePath, width, height, x, y, furnitureName, pedestal),
+    Furniture(texturePath, width, height, x, y, furnitureName, pedestal, canHang),
     pendulum(pendulumTexturePath, pendulumWidth, pendulumHeight),
     pendulumPosition(pendulumPos),
     arrowPosition(arrowPos),
@@ -31,8 +31,8 @@ Clock::Clock(
     Vector2 pendulumPos, Vector2 arrowPos, float arrowLength,
     float width, float height, float x, float y,
     const std::string& furnitureName,
-    bool pedestal
-) : Furniture(textureFrontPath, textureLeftPath, textureRightPath, width, height, x, y, furnitureName, pedestal),
+    bool pedestal, bool canHang
+) : Furniture(textureFrontPath, textureLeftPath, textureRightPath, width, height, x, y, furnitureName, pedestal, canHang),
     pendulum(pendulumTextureFrontPath, pendulumTextureLeftPath, pendulumTextureRightPath, pendulumWidth, pendulumHeight),
     pendulumPosition(pendulumPos),
     arrowPosition(arrowPos),

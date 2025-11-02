@@ -284,8 +284,12 @@ void Room::Update() {
 
         const Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
         const Vector2 furnitureSize = handItem->GetSize();
+
+        if (handItem->CanHang()) {
+            posY = mouseWorldPos.y + furnitureSize.y * 0.3f;
+        }
         
-        float targetX = mouseWorldPos.x - furnitureSize.x * 0.5f;
+        float targetX = mouseWorldPos.x - furnitureSize.x * 0.7f;
         targetX = std::clamp(targetX, 0.0f, width - furnitureSize.x);
         
         float targetY = std::max(posY, furnitureSize.y);

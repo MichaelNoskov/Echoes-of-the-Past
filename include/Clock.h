@@ -22,7 +22,7 @@ public:
         Vector2 pendulumPos, Vector2 arrowPos, float arrowLength,
         float width, float height, float x = 0.0f, float y = 0.0f,
         const std::string& furnitureName = "",
-        bool pedestal = false
+        bool pedestal = false, bool canHang = false
     );
 
     Clock(
@@ -36,7 +36,7 @@ public:
         Vector2 pendulumPos, Vector2 arrowPos, float arrowLength,
         float width, float height, float x = 0.0f, float y = 0.0f,
         const std::string& furnitureName = "",
-        bool pedestal = false
+        bool pedestal = false, bool canHang = false
     );
     
     void Update(bool interact) override;

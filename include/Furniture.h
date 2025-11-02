@@ -15,6 +15,8 @@ private:
 
     bool isPedestal = false;
 
+    bool hang = false;
+
     // перетаскиваем ли
     bool isDragging = false;
 
@@ -39,13 +41,13 @@ private:
 public:
     Furniture(
         const std::string& texturePath,
-        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "", bool pedestal = false
+        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "", bool pedestal = false, bool canHang = false
     );
     Furniture(
         const std::string& textureFrontPath,
         const std::string& textureLeftPath,
         const std::string& textureRightPath,
-        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "", bool pedestal = false
+        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "", bool pedestal = false, bool canHang = false
     );
     ~Furniture();
 
@@ -130,6 +132,8 @@ public:
 
     Room* getRoom() { return room; };
     void setRoom(Room* newRoom) { room = newRoom; };
+
+    bool CanHang() { return hang; };
 };
 
 #endif

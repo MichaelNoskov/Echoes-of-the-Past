@@ -10,8 +10,8 @@ Furniture::Furniture(
     float x,
     float y,
     const std::string& furnitureName,
-    bool pedestal
-) : surface(texturePath, width, height), posX(x), posY(y), name(furnitureName), isPedestal(pedestal) {
+    bool pedestal, bool canHang
+) : surface(texturePath, width, height), posX(x), posY(y), name(furnitureName), isPedestal(pedestal), hang(canHang) {
 }
 
 Furniture::Furniture(
@@ -23,8 +23,8 @@ Furniture::Furniture(
     float x,
     float y,
     const std::string& furnitureName,
-    bool pedestal
-) : surface(textureFrontPath, textureLeftPath, textureRightPath, width, height), posX(x), posY(y), name(furnitureName), isPedestal(pedestal) {
+    bool pedestal, bool canHang
+) : surface(textureFrontPath, textureLeftPath, textureRightPath, width, height), posX(x), posY(y), name(furnitureName), isPedestal(pedestal), hang(canHang) {
 }
 
 Furniture::~Furniture() {
