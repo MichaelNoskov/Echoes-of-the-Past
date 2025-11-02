@@ -38,13 +38,13 @@ Game::Game(int startDay) : day(startDay) {
         "res/textures/furniture/стол.PNG",
         "res/textures/furniture/стол_л.PNG",
         "res/textures/furniture/стол_п.PNG",
-        425.0f, 255.0f, 700.0f, roomHeight, "Table"
+        425.0f, 255.0f, 700.0f, roomHeight, "Table", true
     ));
     curentRoom->AddFurniture(std::make_unique<Furniture>(
         "res/textures/furniture/шкаф.PNG",
         "res/textures/furniture/шкаф_л.PNG",
         "res/textures/furniture/шкаф_п.PNG",
-        400.0f, 550.0f, roomWidth - 650, roomHeight, "???"
+        400.0f, 550.0f, roomWidth - 650, roomHeight, "???", true
     ));
     curentRoom->AddFurniture(std::make_unique<LightFurniture>(
         "res/textures/furniture/лампа.PNG",

@@ -12,6 +12,8 @@ private:
     float posX;
     float posY;
 
+    bool isPedestal = false;
+
     // перетаскиваем ли
     bool isDragging = false;
 
@@ -36,13 +38,13 @@ private:
 public:
     Furniture(
         const std::string& texturePath,
-        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = ""
+        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "", bool pedestal = false
     );
     Furniture(
         const std::string& textureFrontPath,
         const std::string& textureLeftPath,
         const std::string& textureRightPath,
-        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = ""
+        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "", bool pedestal = false
     );
     ~Furniture();
 
@@ -93,6 +95,8 @@ public:
 
     // можно ли передвигать?
     bool GetFreeze() { return freezed; };
+
+    bool IsPedestal() { return isPedestal; };
 
     // заблокировать передвижение
     void Freeze() { freezed = true; };

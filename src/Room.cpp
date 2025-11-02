@@ -268,8 +268,10 @@ void Room::Update() {
             if (handItem == furniture.get()) continue;
             
             if (handItem->IntersectsWith(*furniture)) {
-                posY = furniture->GetPosition().y - furniture->GetSize().y;
-                handItem->setPedestal(furniture.get());
+                if (furniture->IsPedestal()){
+                    posY = furniture->GetPosition().y - furniture->GetSize().y;
+                    handItem->setPedestal(furniture.get());
+                }
                 collide = true;
                 break;
             }
