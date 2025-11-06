@@ -2,34 +2,29 @@
 #define GAME_H
 
 #include "raylib.h"
-#include <Room.h>
+#include <Bunker.h>
 #include <string>
 
 class Game {
 private:
     float time = 0.0f;
     int day = 1;
-    int energy = 300;
 
-    std::unique_ptr<Room> curentRoom;
+    std::unique_ptr<Bunker> curentBunker;
 
 public:
     Game(int startDay=1);
-    Game(int startDay, Room& room);
+    Game(int startDay, Bunker& bunker);
     ~Game();
 
-    void ChangeRoom(std::unique_ptr<Room> newRoom) ;
     void Update();
     void Draw();
-
-    void ToggleRoomFlashLight();
 
     float GetTime() const { return time; }
     int GetHours() const;
     int GetMinutes() const;
     std::string GetTimeString() const;
     void AddTime(float delta);
-    int GetEnergy() { return energy; };
 };
 
 #endif

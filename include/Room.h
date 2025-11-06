@@ -7,7 +7,7 @@
 #include <memory>
 #include "Furniture.h"
 
-class Game;
+class Bunker;
 
 class Room {
 private:
@@ -15,7 +15,7 @@ private:
     float width;
     bool lightsOn;
     bool flashlightOn;
-    Game* game;
+    Bunker* bunker;
 
     Shader shader;
     RenderTexture2D roomTarget;
@@ -38,8 +38,8 @@ private:
     Vector2 RoomToScreenSpace(Vector2 roomPos) const;
 
 public:
-    Room(float sceneWidth, float sceneHeight, const std::string& configPath, Game* gameRef = nullptr);
-    Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area, Game* gameRef = nullptr);
+    Room(float sceneWidth, float sceneHeight, const std::string& configPath, Bunker* bunkerRef = nullptr);
+    Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area, Bunker* bunkerRef = nullptr);
     ~Room();
 
     void UpdateShaderUniforms();
@@ -47,7 +47,7 @@ public:
     void Update();
     void Draw();
     void DrawInternal();
-    Game* GetGame() const { return game; }
+    Bunker* GetBunker() const { return bunker; }
 
     Camera2D& GetCamera() { return camera; }
 

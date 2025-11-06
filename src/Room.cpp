@@ -25,12 +25,12 @@ void moveToBack(std::vector<std::unique_ptr<Furniture>>& furniture,
     }
 }
 
-Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area, Game* gameRef) {
+Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area, Bunker* bunkerRef) {
     width = sceneWidth;
     height = sceneHeight;
     lightsOn = true;
     flashlightOn = false;
-    game = gameRef;
+    bunker = bunkerRef;
 
     drawArea = area;
 

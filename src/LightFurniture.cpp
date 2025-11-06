@@ -25,7 +25,7 @@ void LightFurniture::Update(bool interact) {
         return;
     }
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Furniture::getRoom()->GetGame()->GetEnergy() > 0){
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Furniture::getRoom()->GetBunker()->GetEnergy() > 0){
         Furniture::getRoom() -> ToggleLights();
     }
 

@@ -63,7 +63,7 @@ void Clock::Draw(int side) {
 
     pendulum.Draw(screenPendulumPos.x, screenPendulumPos.y, side);
 
-    float time = Furniture::getRoom()->GetGame()->GetTime();
+    float time = Furniture::getRoom()->GetBunker()->GetGame()->GetTime();
     float normalizedTime = fmodf(time, 1.0f);
 
     float angle = (normalizedTime * 2 - 0.25f) * 2.0f * M_PI;
@@ -90,5 +90,5 @@ void Clock::Draw(int side) {
 };
 
 std::string Clock::GetText() {
-    return Furniture::GetName() + "\n\n" + Furniture::getRoom()->GetGame()->GetTimeString();
+    return Furniture::GetName() + "\n\n" + Furniture::getRoom()->GetBunker()->GetGame()->GetTimeString();
 }
