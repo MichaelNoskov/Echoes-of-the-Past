@@ -43,6 +43,9 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, R
     cameraSensitivity = 3.0f;
     cameraSmoothness = 5.0f;
 
+    shader = LoadShader(0, "res/shaders/room_shader.fs");
+    roomTarget = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+
     std::ifstream configFile(configPath);
     if (!configFile.is_open()) {
         std::cerr << "Ошибка: не удалось открыть файл конфигурации: " << configPath << std::endl;
@@ -81,11 +84,61 @@ Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, R
     handItem = nullptr;
 }
 
-
 Room::~Room() {
     UnloadTexture(textureWallTop);
     UnloadTexture(textureWallDown);
     UnloadTexture(textureFloor);
+    UnloadShader(shader);
+    UnloadRenderTexture(roomTarget);
+}
+
+void Room::UpdateShaderUniforms() {
+    int flashLightsOnLocation = GetShaderLocation(shader, "flashlightOn");
+    float flashLightOnValue = flashlightOn ? 1.0f : 0.0f;
+    SetShaderValue(shader, flashLightsOnLocation, &flashLightOnValue, SHADER_UNIFORM_FLOAT);
+
+    int lightsOnLocation = GetShaderLocation(shader, "lightsOn");
+    float lightsOnValue = lightsOn ? 1.0f : 0.0f;
+    SetShaderValue(shader, lightsOnLocation, &lightsOnValue, SHADER_UNIFORM_FLOAT);
+
+    int flashlightPosLoc = GetShaderLocation(shader, "flashlightPos");
+    Vector2 mousePos = GetMousePosition();
+
+    Vector2 normalizedPos = {
+        (mousePos.x - 100) / GetScreenWidth(),
+        1.0f - (mousePos.y - 100) / GetScreenHeight()
+    };
+    
+    SetShaderValue(shader, flashlightPosLoc, &normalizedPos, SHADER_UNIFORM_VEC2);
+
+    float screenSize[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
+    SetShaderValue(shader, GetShaderLocation(shader, "screenSize"), screenSize, SHADER_UNIFORM_VEC2);
+}
+
+void Room::DrawInternal() {
+    BeginMode2D(camera);
+
+    DrawRectangle(0, 0, width, height, GRAY);
+
+    float centerX = camera.target.x;
+
+    for (const auto& furniture : furnitureList) {
+        float furnitureX = furniture->GetPosition().x;
+        float furnitureWidth = furniture->GetSize().x;
+
+        int side;
+        if (centerX < furnitureX + 0.2f * furnitureWidth) {
+            side = 0;
+        } else if (centerX > furnitureX + furnitureWidth - 0.2f * furnitureWidth) {
+            side = 2;
+        } else {
+            side = 1;
+        }
+        
+        furniture->Draw(side);
+    }
+
+    EndMode2D();
 }
 
 Vector2 Room::ScreenToRoomSpace(Vector2 screenPos) const {
@@ -123,7 +176,6 @@ bool Room::RemoveFurniture(int index) {
     }
     return false;
 }
-
 
 void Room::ClearAllFurniture() {
     furnitureList.clear();
@@ -260,7 +312,6 @@ void Room::Update() {
             
             if (itemPosition.x + itemWidth < pedestalX || itemPosition.x > pedestalX + pedestalWidth) {
                 handItem->setPedestal(nullptr);
-                // pedestal->removeItem();
             } else if (itemPosition.x + itemWidth * 0.25f < pedestalX || 
                       itemPosition.x + itemWidth * 0.75f > pedestalX + pedestalWidth) {
                 collide = true;
@@ -301,38 +352,21 @@ void Room::Update() {
 }
 
 void Room::Draw() {
+    BeginTextureMode(roomTarget);
+        ClearBackground(BLACK);
+        DrawInternal();
+        DrawRectangleLinesEx(drawArea, 5, BLACK);
+    EndTextureMode();
+
+    UpdateShaderUniforms();
+
     BeginScissorMode((int)drawArea.x, (int)drawArea.y, (int)drawArea.width, (int)drawArea.height);
-
-    BeginMode2D(camera);
-
-    DrawRectangle(0, 0, width, height, GRAY);
-
-    float centerX = camera.target.x;
-
-    for (const auto& furniture : furnitureList) {
-        float furnitureX = furniture->GetPosition().x;
-        float furnitureWidth = furniture->GetSize().x;
-
-        int side;
-        if (centerX < furnitureX + 0.2f * furnitureWidth) {
-            side = 0;
-        } else if (centerX > furnitureX + furnitureWidth - 0.2f * furnitureWidth) {
-            side = 2;
-        } else {
-            side = 1;
-        }
-        
-        furniture->Draw(side);
-
-        // DrawCircle(furnitureX + 0.2f * furnitureWidth, camera.target.y, 10, RED);
-        // DrawCircle(furnitureX + furnitureWidth - 0.2f * furnitureWidth, camera.target.y, 10, RED);
-        // DrawCircle(camera.target.x, camera.target.y, 10, GREEN);
-        // DrawCircle(drawArea.height/2, drawArea.width/2, 10, DARKBLUE);
-    }
-
-    EndMode2D();
+    BeginShaderMode(shader);
+        DrawTextureRec(roomTarget.texture, 
+            (Rectangle){0, 0, (float)roomTarget.texture.width, (float)-roomTarget.texture.height},
+            (Vector2){0, 0}, WHITE);
+    EndShaderMode();
     EndScissorMode();
-    DrawRectangleLinesEx(drawArea, 5, BLACK);
 
     if (hoveredFurniture != nullptr && (lightsOn || flashlightOn)) {
         Vector2 mousePos = GetMousePosition();
@@ -370,3 +404,4 @@ void Room::Draw() {
                 fontSize, 1, WHITE);
     }
 }
+

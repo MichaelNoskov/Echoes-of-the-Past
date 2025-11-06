@@ -17,6 +17,9 @@ private:
     bool flashlightOn;
     Game* game;
 
+    Shader shader;
+    RenderTexture2D roomTarget;
+
     Rectangle drawArea;
     Texture2D textureWallTop;
     Texture2D textureWallDown;
@@ -38,9 +41,12 @@ public:
     Room(float sceneWidth, float sceneHeight, const std::string& configPath, Game* gameRef = nullptr);
     Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area, Game* gameRef = nullptr);
     ~Room();
+
+    void UpdateShaderUniforms();
     
     void Update();
     void Draw();
+    void DrawInternal();
     Game* GetGame() const { return game; }
 
     Camera2D& GetCamera() { return camera; }

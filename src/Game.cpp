@@ -7,16 +7,7 @@
 #include <sstream>
 #include <iomanip>
 
-
 Game::Game(int startDay) : day(startDay) {
-    roomShader = LoadShader(0, "res/shaders/room_shader.fs");
-    int flashlightPosLoc = GetShaderLocation(roomShader, "flashlightPos");
-    // int flashlightRadiusLoc = GetShaderLocation(roomShader, "flashlightRadius");
-    // float flashlightRadius = 0.2f;
-    // SetShaderValue(roomShader, flashlightRadiusLoc, &flashlightRadius, SHADER_UNIFORM_FLOAT);
-
-    roomTarget = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-
     float roomWidth = 600*4;
     float roomHeight = 1000;
 
@@ -68,62 +59,22 @@ Game::Game(int startDay) : day(startDay) {
 Game::Game(int startDay, Room& room) : day(startDay), curentRoom(&room) {}
 
 Game::~Game() {
-    UnloadShader(roomShader);
 }
 
 void Game::Update() {
     float timeScale = 60.0f / (24.0f * 60.0f);
     AddTime(GetFrameTime() * timeScale);
-    // if (energy <= 0 && curentRoom->AreLightsOn()) {
-    //     curentRoom->SetLights(false);
-    // }
-    // if (energy > 0 && curentRoom->AreLightsOn()) energy -= 1;
 
     curentRoom->Update();
+    
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
         ToggleRoomFlashLight();
     }
-
 }
 
 void Game::Draw() {
-    Vector2 roomSize = curentRoom->GetSize();
     ClearBackground(BLACK);
-    BeginTextureMode(roomTarget);
-        ClearBackground(BLACK);
-        curentRoom->Draw();
-    EndTextureMode();
-
-    int flashLightsOnLocation = GetShaderLocation(roomShader, "flashlightOn");
-    float flashLightOnValue = curentRoom->AreFlashLightOn() ? 1.0f : 0.0f;
-    SetShaderValue(roomShader, flashLightsOnLocation, &flashLightOnValue, SHADER_UNIFORM_FLOAT);
-
-    int lightsOnLocation = GetShaderLocation(roomShader, "lightsOn");
-    float lightsOnValue = curentRoom->AreLightsOn() ? 1.0f : 0.0f;
-    SetShaderValue(roomShader, lightsOnLocation, &lightsOnValue, SHADER_UNIFORM_FLOAT);
-
-    int flashlightPosLoc = GetShaderLocation(roomShader, "flashlightPos");
-    Rectangle roomArea = curentRoom->GetDrawArea();
-    Vector2 mousePos = GetMousePosition();
-
-    Vector2 normalizedPos = {
-        (mousePos.x - 100) / GetScreenWidth(),
-        1 - (mousePos.y - 100) / GetScreenHeight()
-    };
-    
-    SetShaderValue(roomShader, flashlightPosLoc, &normalizedPos, SHADER_UNIFORM_VEC2);
-    float screenSize[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
-    SetShaderValue(roomShader, GetShaderLocation(roomShader, "screenSize"), screenSize, SHADER_UNIFORM_VEC2);
-
-    BeginScissorMode((int)roomArea.x, (int)roomArea.y, (int)roomArea.width, (int)roomArea.height);
-    
-    BeginShaderMode(roomShader);
-        DrawTextureRec(roomTarget.texture, 
-            (Rectangle){0, 0, (float)roomTarget.texture.width, (float)-roomTarget.texture.height},
-            (Vector2){0, 0}, WHITE);
-    EndShaderMode();
-    
-    EndScissorMode();
+    curentRoom->Draw();
 
     DrawText("Right click to toggle flashlight", 10, 40, 20, LIGHTGRAY);
     DrawText("Press left to move furniture", 10, 70, 20, LIGHTGRAY);
