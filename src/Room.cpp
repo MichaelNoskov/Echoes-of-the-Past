@@ -263,8 +263,8 @@ void Room::Update() {
     const float centerX = drawArea.width * 0.5f;
     
     float mouseOffsetX = 0.0f;
-    const float lowThreshold = drawArea.width * 0.3f;
-    const float highThreshold = drawArea.width * 0.7f;
+    const float lowThreshold = drawArea.width * 0.2f;
+    const float highThreshold = drawArea.width * 0.8f;
     
     if (relativeMouseX < lowThreshold) {
         mouseOffsetX = (relativeMouseX - lowThreshold) / centerX;
@@ -350,6 +350,7 @@ void Room::Update() {
         furniture -> Update(hoveredFurniture == furniture.get());
     }
 }
+
 
 void Room::Draw() {
     BeginTextureMode(roomTarget);
