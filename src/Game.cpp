@@ -58,7 +58,13 @@ Game::Game(int startDay) : day(startDay) {
         90.0f, 108.0f, (roomWidth-108.0f) / 2, 108, "Lamp"
     ));
 
+    std::unique_ptr<Room> room2 = std::make_unique<Room>(roomWidth, roomHeight, "res/config.json", roomArea, curentBunker.get());
+    room2->AddFurniture(std::make_unique<LightFurniture>(
+        "res/textures/furniture/лампа.PNG",
+        90.0f, 108.0f, (roomWidth-108.0f) / 2, 108, "Lamp"
+    ));
     curentBunker->AddRoom(std::move(room));
+    curentBunker->AddRoom(std::move(room2));
 
 }
 

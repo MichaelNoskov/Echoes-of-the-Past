@@ -54,10 +54,39 @@ void Bunker::Update() {
     }
 
     currentRoom->Update();
-    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
         currentRoom->ToggleFlashLight();
     }
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        Vector2 mousePos = GetMousePosition();
+        Rectangle drawArea = currentRoom->GetDrawArea();
+
+        float edgeZoneWidth = 50.0f;
     
+        Rectangle leftEdgeZone = {
+            drawArea.x,
+            drawArea.y,
+            edgeZoneWidth,
+            drawArea.height
+        };
+
+        Rectangle rightEdgeZone = {
+            drawArea.x + drawArea.width - edgeZoneWidth,
+            drawArea.y,
+            edgeZoneWidth,
+            drawArea.height
+        };
+    
+        if (CheckCollisionPointRec(mousePos, leftEdgeZone) && currentRoomIndex > 0) {
+            GoToPreviousRoom();
+        }
+        else if (CheckCollisionPointRec(mousePos, rightEdgeZone) && 
+                 currentRoomIndex < static_cast<int>(roomList.size()) - 1) {
+            GoToNextRoom();
+        }
+    }
 }
 
 void Bunker::Draw() {
