@@ -12,8 +12,6 @@ private:
     int energy = 300;
 
     std::unique_ptr<Room> curentRoom;
-    Shader roomShader;
-    RenderTexture2D roomTarget;
 
 public:
     Game(int startDay=1);
