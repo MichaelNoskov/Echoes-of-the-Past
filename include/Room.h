@@ -13,8 +13,8 @@ class Room {
 private:
     float height;
     float width;
-    bool lightsOn;
-    bool flashlightOn;
+    bool lightsOn = false;
+    bool flashlightOn = false;
     Bunker* bunker;
 
     Shader shader;
@@ -67,7 +67,7 @@ public:
     void ToggleFlashLight();
     bool AreLightsOn() const { return lightsOn; }
     bool AreFlashLightOn() const { return flashlightOn; }
-    void SetLights(bool on) { lightsOn = on; }
+    void SetLights(bool on);
 
     Vector2 GetSize() const { return {width, height}; };
 };

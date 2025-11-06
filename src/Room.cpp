@@ -1,4 +1,6 @@
 #include "Room.h"
+#include "LightFurniture.h"
+#include "Bunker.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -28,8 +30,6 @@ void moveToBack(std::vector<std::unique_ptr<Furniture>>& furniture,
 Room::Room(float sceneWidth, float sceneHeight, const std::string& configPath, Rectangle area, Bunker* bunkerRef) {
     width = sceneWidth;
     height = sceneHeight;
-    lightsOn = true;
-    flashlightOn = false;
     bunker = bunkerRef;
 
     drawArea = area;
@@ -152,6 +152,10 @@ Vector2 Room::RoomToScreenSpace(Vector2 roomPos) const {
 }
 
 void Room::AddFurniture(std::unique_ptr<Furniture> furniture) {
+    if (LightFurniture* lamp = dynamic_cast<LightFurniture*>(furniture.get())) {
+        SetLights(true);
+    }
+
     furniture->setRoom(this);
     furnitureList.push_back(std::move(furniture));
 }
@@ -204,8 +208,15 @@ void Room::MoveFurniture(const std::string& name, float newX, float newY) {
     }
 }
 
+void Room::SetLights(bool on) {
+    if (on && GetBunker()->GetEnergy() <= 0) {
+        on = false;
+    }
+    lightsOn = on;
+}
+
 void Room::ToggleLights() {
-    lightsOn = !lightsOn;
+    SetLights(!lightsOn);
 }
 
 void Room::ToggleFlashLight() {
