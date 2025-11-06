@@ -72,8 +72,12 @@ Game::~Game() {
 }
 
 void Game::Update() {
-    float timeScale = 1.0f / (24.0f * 60.0f);
+    float timeScale = 60.0f / (24.0f * 60.0f);
     AddTime(GetFrameTime() * timeScale);
+    // if (energy <= 0 && curentRoom->AreLightsOn()) {
+    //     curentRoom->SetLights(false);
+    // }
+    // if (energy > 0 && curentRoom->AreLightsOn()) energy -= 1;
 
     curentRoom->Update();
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){

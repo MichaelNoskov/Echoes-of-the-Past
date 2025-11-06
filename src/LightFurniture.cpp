@@ -1,5 +1,6 @@
 #include "LightFurniture.h"
 #include "Room.h"
+# include "Game.h"
 
 LightFurniture::LightFurniture(
     const std::string& texturePath,
@@ -24,7 +25,7 @@ void LightFurniture::Update(bool interact) {
         return;
     }
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Furniture::getRoom()->GetGame()->GetEnergy() > 0){
         Furniture::getRoom() -> ToggleLights();
     }
 

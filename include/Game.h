@@ -8,7 +8,9 @@
 class Game {
 private:
     float time = 0.0f;
-    int day;
+    int day = 1;
+    int energy = 300;
+
     std::unique_ptr<Room> curentRoom;
     Shader roomShader;
     RenderTexture2D roomTarget;
@@ -29,6 +31,7 @@ public:
     int GetMinutes() const;
     std::string GetTimeString() const;
     void AddTime(float delta);
+    int GetEnergy() { return energy; };
 };
 
 #endif
