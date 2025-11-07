@@ -33,7 +33,7 @@ Clock::Clock(
     const std::string& furnitureName,
     bool pedestal, bool canHang
 ) : Furniture(textureFrontPath, textureLeftPath, textureRightPath, width, height, x, y, furnitureName, pedestal, canHang),
-    pendulum(pendulumTextureFrontPath, pendulumTextureLeftPath, pendulumTextureRightPath, pendulumWidth, pendulumHeight),
+    pendulum({{"default", pendulumTextureFrontPath}, {"left", pendulumTextureLeftPath}, {"right", pendulumTextureRightPath}}, pendulumWidth, pendulumHeight),
     pendulumPosition(pendulumPos),
     arrowPosition(arrowPos),
     arrowSize(arrowLength)  
@@ -61,7 +61,7 @@ void Clock::Draw(int side) {
         furniturePos.y - furnitureSize.y + pendulumPosition.y * furnitureSize.y + pendulum.GetSize().y
     };
 
-    pendulum.Draw(screenPendulumPos.x, screenPendulumPos.y, side);
+    pendulum.Draw(screenPendulumPos.x, screenPendulumPos.y);
 
     float time = Furniture::getRoom()->GetBunker()->GetGame()->GetTime();
     float normalizedTime = fmodf(time, 1.0f);

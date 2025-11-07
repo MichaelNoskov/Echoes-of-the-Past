@@ -24,7 +24,7 @@ Furniture::Furniture(
     float y,
     const std::string& furnitureName,
     bool pedestal, bool canHang
-) : surface(textureFrontPath, textureLeftPath, textureRightPath, width, height), posX(x), posY(y), name(furnitureName), isPedestal(pedestal), hang(canHang) {
+) : surface({{"default", textureFrontPath}, {"left", textureLeftPath}, {"right", textureRightPath}}, width, height), posX(x), posY(y), name(furnitureName), isPedestal(pedestal), hang(canHang) {
 }
 
 Furniture::~Furniture() {
@@ -34,12 +34,21 @@ void Furniture::Update(bool interact){
 }
 
 void Furniture::Draw(int side) {
+
+    std::string state = "default";
+    if (side == 0) {
+        state = "left";
+    } else if (side == 2) {
+        state = "right";
+    }
+    surface.SetState(state);
+
     if (isCollisioning) {
-        surface.DrawCollisioning(posX, posY, side);
+        surface.DrawCollisioning(posX, posY);
     } else if (isDragging) {
-        surface.DrawDragging(posX, posY, side);
+        surface.DrawDragging(posX, posY);
     } else {
-        surface.Draw(posX, posY, side);
+        surface.Draw(posX, posY);
     }
 }
 
