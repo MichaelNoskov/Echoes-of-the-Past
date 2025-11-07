@@ -27,6 +27,12 @@ Furniture::Furniture(
 ) : surface({{"default", textureFrontPath}, {"left", textureLeftPath}, {"right", textureRightPath}}, width, height), posX(x), posY(y), name(furnitureName), isPedestal(pedestal), hang(canHang) {
 }
 
+Furniture::Furniture(
+    const std::map<std::string, std::string>& texturePaths,
+    float width, float height, float x, float y, const std::string& furnitureName, bool pedestal, bool canHang
+) : surface(texturePaths, width, height), posX(x), posY(y), name(furnitureName), isPedestal(pedestal), hang(canHang) {
+}
+
 Furniture::~Furniture() {
 }
 

@@ -4,20 +4,16 @@
 #include <algorithm>
 
 Drawable::Drawable(const std::string& texturePath) {
-    // Create a map with only "default" state
     std::map<std::string, std::string> texturePaths = {{"default", texturePath}};
-    
-    // Load textures
+
     for (const auto& pair : texturePaths) {
         textures[pair.first] = LoadTexture(pair.second.c_str());
         SetTextureFilter(textures[pair.first], TEXTURE_FILTER_POINT);
     }
 
-    // Use the default texture to determine dimensions
     width = textures["default"].width;
     height = textures["default"].height;
 
-    // Create outline textures
     for (const auto& pair : textures) {
         outlineTextures[pair.first] = CreateOutlineTexture(pair.second, width, height);
         SetTextureFilter(outlineTextures[pair.first], TEXTURE_FILTER_POINT);
@@ -25,24 +21,18 @@ Drawable::Drawable(const std::string& texturePath) {
 }
 
 Drawable::Drawable(const std::map<std::string, std::string>& texturePaths) {
-    // Validate that "default" state exists
     if (texturePaths.find("default") == texturePaths.end()) {
-        // Handle error - you might want to throw an exception or use a fallback
-        // For now, we'll use the first texture as default
         currentState = texturePaths.begin()->first;
     }
-    
-    // Load textures
+
     for (const auto& pair : texturePaths) {
         textures[pair.first] = LoadTexture(pair.second.c_str());
         SetTextureFilter(textures[pair.first], TEXTURE_FILTER_POINT);
     }
 
-    // Use the default texture to determine dimensions
     width = textures[currentState].width;
     height = textures[currentState].height;
 
-    // Create outline textures
     for (const auto& pair : textures) {
         outlineTextures[pair.first] = CreateOutlineTexture(pair.second, width, height);
         SetTextureFilter(outlineTextures[pair.first], TEXTURE_FILTER_POINT);
@@ -50,10 +40,9 @@ Drawable::Drawable(const std::map<std::string, std::string>& texturePaths) {
 }
 
 Drawable::Drawable(const std::string& texturePath, float width, float height) {
-    // Create a map with only "default" state
+
     std::map<std::string, std::string> texturePaths = {{"default", texturePath}};
-    
-    // Load textures
+
     for (const auto& pair : texturePaths) {
         textures[pair.first] = LoadTexture(pair.second.c_str());
         SetTextureFilter(textures[pair.first], TEXTURE_FILTER_POINT);
@@ -62,7 +51,6 @@ Drawable::Drawable(const std::string& texturePath, float width, float height) {
     this->width = width;
     this->height = height;
 
-    // Create outline textures
     for (const auto& pair : textures) {
         outlineTextures[pair.first] = CreateOutlineTexture(pair.second, width, height);
         SetTextureFilter(outlineTextures[pair.first], TEXTURE_FILTER_POINT);
@@ -74,14 +62,10 @@ Drawable::Drawable(
     float width,
     float height
 ) {
-    // Validate that "default" state exists
     if (texturePaths.find("default") == texturePaths.end()) {
-        // Handle error - you might want to throw an exception or use a fallback
-        // For now, we'll use the first texture as default
         currentState = texturePaths.begin()->first;
     }
-    
-    // Load textures
+
     for (const auto& pair : texturePaths) {
         textures[pair.first] = LoadTexture(pair.second.c_str());
         SetTextureFilter(textures[pair.first], TEXTURE_FILTER_POINT);
@@ -90,7 +74,6 @@ Drawable::Drawable(
     this->width = width;
     this->height = height;
 
-    // Create outline textures
     for (const auto& pair : textures) {
         outlineTextures[pair.first] = CreateOutlineTexture(pair.second, width, height);
         SetTextureFilter(outlineTextures[pair.first], TEXTURE_FILTER_POINT);
@@ -169,7 +152,6 @@ Texture2D Drawable::CreateOutlineTexture(Texture2D originalTexture, float target
 }
 
 Drawable::~Drawable() {
-    // Unload all textures
     for (auto& pair : textures) {
         UnloadTexture(pair.second);
     }
@@ -179,7 +161,6 @@ Drawable::~Drawable() {
 }
 
 void Drawable::Draw(float x, float y) {
-    // Get current texture based on state
     Texture2D texture = textures[currentState];
 
     float transformedWidth = scale * width;
@@ -193,7 +174,6 @@ void Drawable::Draw(float x, float y) {
 }
 
 void Drawable::DrawOutline(float x, float y, Color outlineColor, float visibility) {
-    // Get current textures based on state
     Texture2D texture = textures[currentState];
     Texture2D outlineTexture = outlineTextures[currentState];
 
@@ -228,18 +208,15 @@ Rectangle Drawable::GetBoundingBox(float x, float y) const {
 }
 
 bool Drawable::IsPointInside(float x, float y) const {
-    Rectangle bbox = GetBoundingBox(0, 0); // Assuming coordinates are relative
+    Rectangle bbox = GetBoundingBox(0, 0);
     return x >= bbox.x && x <= bbox.x + bbox.width && 
            y >= bbox.y && y <= bbox.y + bbox.height;
 }
 
-// New state management methods
 void Drawable::SetState(const std::string& state) {
     if (textures.find(state) != textures.end()) {
         currentState = state;
     }
-    // Optionally, you could throw an exception or log a warning here
-    // if the state doesn't exist
 }
 
 bool Drawable::HasState(const std::string& state) const {

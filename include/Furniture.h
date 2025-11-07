@@ -49,6 +49,10 @@ public:
         const std::string& textureRightPath,
         float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "", bool pedestal = false, bool canHang = false
     );
+    Furniture(
+        const std::map<std::string, std::string>& texturePaths,
+        float width, float height, float x = 0.0f, float y = 0.0f, const std::string& furnitureName = "", bool pedestal = false, bool canHang = false
+    );
     ~Furniture();
 
     // метод для обаботки событий внутри мебели
@@ -100,7 +104,7 @@ public:
     bool GetOnPedestal() { return pedestal != nullptr; };
 
     // можно ли передвигать?
-    bool GetFreeze() { return freezed; };
+    virtual bool GetFreeze() { return freezed; };
 
     bool IsPedestal() { return isPedestal; };
 
@@ -134,6 +138,10 @@ public:
     void setRoom(Room* newRoom) { room = newRoom; };
 
     bool CanHang() { return hang; };
+
+    void SetState(const std::string& state) { surface.SetState(state); };
+    std::string GetCurrentState() const { return surface.GetCurrentState(); };
+
 };
 
 #endif
