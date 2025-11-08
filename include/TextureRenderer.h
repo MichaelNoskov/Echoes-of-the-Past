@@ -7,8 +7,8 @@
 
 struct TextureDrawContext {
     Vector2 position;
-    float scale;
-    int method;
+    float scale = 1;
+    int method = 0;
 };
 
 class TextureRenderer : public Drawable<TextureDrawContext> {
@@ -18,9 +18,9 @@ private:
     float height;
     Vector2 offset;
 
-    void DrawBottom(Vector2 position, float scale = 1);
-    void DrawCenter(Vector2 position, float scale = 1);
-    void DrawTop(Vector2 position, float scale = 1);
+    void DrawBottom(Vector2 position, float scale);
+    void DrawCenter(Vector2 position, float scale);
+    void DrawTop(Vector2 position, float scale);
 
 public:
     TextureRenderer(
