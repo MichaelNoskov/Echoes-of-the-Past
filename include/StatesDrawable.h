@@ -2,7 +2,6 @@
 #define STATESDRAWABLE_H
 
 #include "raylib.h"
-#include "TextureRenderer.h"
 #include "Drawable.h"
 #include <string>
 #include <vector>
@@ -16,16 +15,16 @@ struct StatesDrawContext {
 
 class StatesDrawable : public Drawable<StatesDrawContext> {
 private:
-    std::map<std::string, TextureRenderer> textures;
+    std::map<std::string, Drawable> textures;
     std::string currentState = "default";
 
 public:
     StatesDrawable(
-        const std::map<std::string, TextureRenderer>& textures
+        const std::map<std::string, Drawable>& textures
     );
 
     StatesDrawable(
-        TextureRenderer texture
+        Drawable texture
     );
 
     void SetState(std::string newState);
