@@ -1,18 +1,18 @@
-#ifndef SPATIAL_DRAWABLE_H
-#define SPATIAL_DRAWABLE_H
+#ifndef BASE_OBJECT_H
+#define BASE_OBJECT_H
 
 #include "Spatial.h"
 #include "Drawable.h"
 #include <memory>
 
 template<typename Context, typename BoundingType>
-class SpatialDrawable {
+class BaseObject {
 private:
     std::shared_ptr<Spatial<Context, BoundingType>> spatial;
     std::shared_ptr<Drawable<Context>> drawable;
 
 public:
-    SpatialDrawable(
+    BaseObject(
         std::shared_ptr<Spatial<Context, BoundingType>> spatialObj = nullptr,
         std::shared_ptr<Drawable<Context>> drawableObj = nullptr
     ) : spatial(spatialObj), drawable(drawableObj) {}
