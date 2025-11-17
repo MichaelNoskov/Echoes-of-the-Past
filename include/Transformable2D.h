@@ -5,7 +5,7 @@
 #include "Spatial.h"
 #include <string>
 
-class Transformable2D : public Spatial<Vector2> {
+class Transformable2D : public Spatial<Vector2, Rectangle> {
 private:
     float scale = 1.0f;
     Vector2 size;
@@ -22,6 +22,11 @@ public:
     Rectangle GetBoundingBox() const override;
     Vector2 GetPosition() const override;
     void SetPosition(const Vector2& newPosition) override;
+
+    bool Intersects(const Spatial<Vector2, Rectangle>& other) const override;
+    bool Intersects(const Rectangle& otherRect) const override;
+    bool ContainsPoint(const Vector2& point) const override;
+    bool ContainsPoint(float x, float y) const;
 
     Vector2 GetSize() const;
     float GetScale() const;

@@ -24,6 +24,26 @@ void Transformable2D::SetPosition(const Vector2& newPosition) {
     position = newPosition;
 }
 
+bool Transformable2D::Intersects(const Spatial<Vector2, Rectangle>& other) const {
+    Rectangle thisRect = GetBoundingBox();
+    Rectangle otherRect = other.GetBoundingBox();
+    return CheckCollisionRecs(thisRect, otherRect);
+}
+
+bool Transformable2D::Intersects(const Rectangle& otherRect) const {
+    Rectangle thisRect = GetBoundingBox();
+    return CheckCollisionRecs(thisRect, otherRect);
+}
+
+bool Transformable2D::ContainsPoint(const Vector2& point) const {
+    Rectangle thisRect = GetBoundingBox();
+    return CheckCollisionPointRec(point, thisRect);
+}
+
+bool Transformable2D::ContainsPoint(float x, float y) const {
+    return ContainsPoint(Vector2{x, y});
+}
+
 Vector2 Transformable2D::GetSize() const {
     return size;
 }
