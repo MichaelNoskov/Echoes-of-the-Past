@@ -9,7 +9,7 @@
 
 struct StatesDrawContext {
     Vector2 position;
-    float scale = 1;
+    Vector2 size;
     int method = 0;
 };
 
