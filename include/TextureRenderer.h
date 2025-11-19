@@ -26,6 +26,8 @@ public:
         Vector2 offset = {0, 0}
     );
 
+    ~TextureRenderer();
+
     void Draw(const TextureDrawContext& context) override {
         if (context.method == 0) {
             DrawBottom(context.position, context.size);
