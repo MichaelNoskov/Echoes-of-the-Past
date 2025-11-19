@@ -11,6 +11,7 @@ public:
     virtual BoundingType GetBoundingBox() const = 0;
     virtual Context GetPosition() const = 0;
     virtual void SetPosition(const Context& pos) = 0;
+    virtual Vector2 GetSize() const = 0;
 
     virtual bool Intersects(const Spatial<Context, BoundingType>& other) const = 0;
     virtual bool Intersects(const BoundingType& otherBounds) const = 0;

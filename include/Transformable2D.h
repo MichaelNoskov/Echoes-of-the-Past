@@ -28,7 +28,7 @@ public:
     bool ContainsPoint(const Vector2& point) const override;
     bool ContainsPoint(float x, float y) const;
 
-    Vector2 GetSize() const;
+    Vector2 GetSize() const override;
     float GetScale() const;
 
     Vector2 Move(const Vector2& shift);
