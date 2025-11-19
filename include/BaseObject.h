@@ -5,16 +5,19 @@
 #include "Drawable.h"
 #include <memory>
 
+using Spatial2D = Spatial<Vector2, Rectangle>;
+using BaseObject2D = BaseObject<Vector2, Rectangle>;
+
 template<typename Context, typename BoundingType>
 class BaseObject {
 private:
     std::shared_ptr<Spatial<Context, BoundingType>> spatial;
-    std::shared_ptr<Drawable<Context>> drawable;
+    std::shared_ptr<Drawable> drawable;
 
 public:
     BaseObject(
         std::shared_ptr<Spatial<Context, BoundingType>> spatialObj = nullptr,
-        std::shared_ptr<Drawable<Context>> drawableObj = nullptr
+        std::shared_ptr<Drawable> drawableObj = nullptr
     ) : spatial(spatialObj), drawable(drawableObj) {}
 
     BoundingType GetBoundingBox() const {
@@ -41,15 +44,24 @@ public:
         return spatial ? spatial->ContainsPoint(point) : false;
     }
 
-    void Draw(const Context& context) {
-        if (drawable) drawable->Draw(context);
+    void Draw() {
+        if (drawable && spatial) {
+            DrawContext context(spatial->GetPosition(), spatial->GetSize());
+            drawable->Draw(context);
+        }
+    }
+
+    void Draw(const DrawContext& context) {
+        if (drawable) {
+            drawable->Draw(context);
+        }
     }
 
     void SetSpatial(std::shared_ptr<Spatial<Context, BoundingType>> newSpatial) {
         spatial = newSpatial;
     }
 
-    void SetDrawable(std::shared_ptr<Drawable<Context>> newDrawable) {
+    void SetDrawable(std::shared_ptr<Drawable> newDrawable) {
         drawable = newDrawable;
     }
 
@@ -57,7 +69,7 @@ public:
         return spatial;
     }
 
-    std::shared_ptr<Drawable<Context>> GetDrawable() const {
+    std::shared_ptr<Drawable> GetDrawable() const {
         return drawable;
     }
 
