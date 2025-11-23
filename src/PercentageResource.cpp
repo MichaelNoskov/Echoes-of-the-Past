@@ -3,24 +3,19 @@
 #include <sstream>
 #include <iomanip>
 
-PercentageResource::PercentageResource(const std::string& texturePath, int startValue, int maximumValue) 
-    : currentValue(startValue), maxValue(maximumValue) {
+PercentageResource::PercentageResource(const std::string& resourceName, const std::string& texturePath, int startValue, int maximumValue) 
+    : name(resourceName), currentValue(startValue), maxValue(maximumValue) {
     
     if (!texturePath.empty()) {
         icon = LoadTexture(texturePath.c_str());
-        iconLoaded = true;
     }
 }
 
 PercentageResource::~PercentageResource() {
-    if (iconLoaded) {
-        UnloadTexture(icon);
-    }
+    UnloadTexture(icon);
 }
 
 void PercentageResource::Draw(const Rectangle& area) const {
-    if (!iconLoaded) return;
-    
     float scale = std::min(area.width / icon.width, area.height / icon.height) * 0.7f;
     float scaledWidth = icon.width * scale;
     float scaledHeight = icon.height * scale;
@@ -39,35 +34,30 @@ void PercentageResource::SetValue(int newValue) {
 
 std::string PercentageResource::GetDisplayText() const {
     std::ostringstream text;
-    text << currentValue << "/" << maxValue << " " << "Вт" << " (" 
-         << std::fixed << std::setprecision(1) << (GetPercentage() * 100) << "%)";
+    text << std::fixed << std::setprecision(1) << (GetPercentage() * 100) << "%";
     return text.str();
 }
 
-bool PercentageResource::Add(int value) {
+void PercentageResource::Add(int value) {
     if (value < 0) {
         throw std::invalid_argument("Cannot add negative value");
     }
     
     if (currentValue + value > maxValue) {
         currentValue = maxValue;
-        return false;
     }
     
     currentValue += value;
-    return true;
 }
 
-bool PercentageResource::Subtract(int value) {
+void PercentageResource::Subtract(int value) {
     if (value < 0) {
         throw std::invalid_argument("Cannot subtract negative value");
     }
     
     if (currentValue >= value) {
         currentValue -= value;
-        return true;
     }
-    return false;
 }
 
 void PercentageResource::SetMaxValue(int newMaxValue) {

@@ -2,8 +2,9 @@
 #include "LightFurniture.h"
 #include <algorithm>
 
-Bunker::Bunker(int startEnergy, Game* gameRef) : game(gameRef) {
-    resources.push_back(std::make_unique<PercentageResource>("res/textures/resources/energy.png", startEnergy, startEnergy));
+
+Bunker::Bunker(int startEnergy, int energyCapacity, Game* gameRef) : game(gameRef) {
+    resources.push_back(std::make_unique<PercentageResource>("Energy", "res/textures/resources/energy.png", startEnergy, energyCapacity));
 }
 
 Bunker::~Bunker() {
@@ -58,7 +59,7 @@ void Bunker::AddResource(std::unique_ptr<Resource> resource) {
 Resource* Bunker::GetResource(const std::string& name) {
     auto it = std::find_if(resources.begin(), resources.end(),
         [&name](const auto& resource) { 
-            return resource->GetDisplayText().find(name) != std::string::npos; 
+            return resource->GetName() == name;
         });
     return it != resources.end() ? it->get() : nullptr;
 }
@@ -88,7 +89,7 @@ void Bunker::Update() {
             if (lightCount > 0) {
                 Resource* PercentageResource = GetResource("Energy");
                 if (PercentageResource) {
-                    PercentageResource->SetValue(PercentageResource->GetValue() - lightCount);
+                    PercentageResource->Subtract(lightCount);
                 }
             }
         }

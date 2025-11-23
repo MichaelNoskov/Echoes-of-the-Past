@@ -22,7 +22,7 @@ Game::Game(int startDay) : day(startDay) {
         roomHeight
     };
 
-    curentBunker = std::make_unique<Bunker>(3000, this);
+    curentBunker = std::make_unique<Bunker>(3000, 6000, this);
 
     std::unique_ptr<Room> room = std::make_unique<Room>(roomWidth, roomHeight, "res/config.json", roomArea, curentBunker.get());
     room->AddFurniture(std::make_unique<Furniture>("res/textures/furniture/монитор.PNG", "res/textures/furniture/монитор_л.PNG", "res/textures/furniture/монитор_п.PNG", 250.0f, 177.0f, 200.0f, roomHeight, "Monitor"));
@@ -88,7 +88,7 @@ void Game::AddResource(std::unique_ptr<Resource> resource) {
 Resource* Game::GetResource(const std::string& name) {
     auto it = std::find_if(resources.begin(), resources.end(),
         [&name](const auto& resource) { 
-            return resource->GetDisplayText().find(name) != std::string::npos; 
+            return resource->GetName() == name;
         });
     return it != resources.end() ? it->get() : nullptr;
 }
@@ -195,7 +195,7 @@ void Game::DrawResources() {
     
     if (hoveredResource) {
         Vector2 mousePos = GetMousePosition();
-        std::string tooltipText = hoveredResource->GetDisplayText();
+        std::string tooltipText = hoveredResource->GetName();
         
         int padding = 8;
         Vector2 textSize = MeasureTextEx(GetFontDefault(), tooltipText.c_str(), fontSize, 1);

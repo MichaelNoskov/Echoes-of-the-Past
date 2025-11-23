@@ -20,7 +20,7 @@ private:
     int currentRoomIndex = 0; 
 
 public:
-    Bunker(int startEnergy = 0, Game* gameRef = nullptr);
+    Bunker(int startEnergy = 0, int energyCapacity = 0, Game* gameRef = nullptr);
     ~Bunker();
 
     Game* GetGame() const { return game; }
