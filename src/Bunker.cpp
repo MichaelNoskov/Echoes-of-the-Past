@@ -72,6 +72,8 @@ void Bunker::Update() {
 
     currentRoom->Update();
 
+    Resource* PercentageResource = GetResource("Energy");
+
     for (const auto& room : roomList) {
         if (room && room->AreLightsOn()) {
             std::vector<std::string> furnitureNames = room->GetFurnitureNames();
@@ -87,11 +89,16 @@ void Bunker::Update() {
                 }
             }
             if (lightCount > 0) {
-                Resource* PercentageResource = GetResource("Energy");
                 if (PercentageResource) {
                     PercentageResource->Subtract(lightCount);
                 }
             }
+        }
+    }
+
+    if (PercentageResource->GetValue() <= 0) {
+        for (const auto& room : roomList) {
+            room->SetLights(false);
         }
     }
 
