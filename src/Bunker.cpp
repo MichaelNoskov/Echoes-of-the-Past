@@ -90,7 +90,7 @@ void Bunker::Update() {
             }
             if (lightCount > 0) {
                 if (PercentageResource) {
-                    PercentageResource->Subtract(lightCount);
+                    PercentageResource->Subtract(lightCount * 0.1);
                 }
             }
         }
