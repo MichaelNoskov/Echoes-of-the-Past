@@ -4,13 +4,16 @@
 #include "raylib.h"
 #include <Room.h>
 #include <string>
+#include <vector>
+#include <memory>
+#include "Resource.h"
 
 class Game;
 
 class Bunker {
 private:
-    int energy;
     Game* game;
+    std::vector<std::unique_ptr<Resource>> resources;
 
     std::vector<std::unique_ptr<Room>> roomList;
     int currentRoomIndex = 0; 
@@ -28,7 +31,12 @@ public:
     bool GoToNextRoom();
     bool GoToPreviousRoom();
 
-    int GetEnergy() { return energy; }
+    void AddResource(const std::string& name, const std::string& texturePath, const std::string& unit = "", int startAmount = 0);
+    Resource* GetResource(const std::string& name);
+    bool AddToResource(const std::string& name, int amount);
+    bool SubtractFromResource(const std::string& name, int amount);
+    void SetResourceAmount(const std::string& name, int amount);
+    const std::vector<std::unique_ptr<Resource>>& GetResources() const { return resources; }
 
     void Update();
     void Draw();

@@ -150,7 +150,7 @@ void Game::DrawResources() {
     const float iconSize = 160.0f;
     const float spacing = 30.0f;
     const int fontSize = 40;
-    const int textPadding = 16;
+    const int textPadding = -8;
     
     const int maxColumns = CalculateOptimalColumns(area.width, iconSize, spacing);
     const int rows = (resources.size() + maxColumns - 1) / maxColumns;

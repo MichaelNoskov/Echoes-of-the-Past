@@ -209,7 +209,8 @@ void Room::MoveFurniture(const std::string& name, float newX, float newY) {
 }
 
 void Room::SetLights(bool on) {
-    if (on && GetBunker()->GetEnergy() <= 0) {
+    Resource* energy = bunker->GetResource("Energy");
+    if (on && energy && energy->GetAmount() <= 0) {
         on = false;
     }
     lightsOn = on;

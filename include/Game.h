@@ -35,6 +35,9 @@ public:
     bool AddToResource(const std::string& name, int amount);
     bool SubtractFromResource(const std::string& name, int amount);
     void SetResourceAmount(const std::string& name, int amount);
+
+    std::vector<Resource*> GetAllResources() const;
+    
     int CalculateOptimalColumns(float availableWidth, float iconSize, float spacing) const;
 
 private:
