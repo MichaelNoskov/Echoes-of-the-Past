@@ -1,10 +1,10 @@
-#ifndef ENERGYRESOURCE_H
-#define ENERGYRESOURCE_H
+#ifndef PERCENTAGE_RESOURCE_H
+#define PERCENTAGE_RESOURCE_H
 
 #include "Resource.h"
 #include <string>
 
-struct EnergyResource : public Resource {
+struct PercentageResource : public Resource {
 private:
     Texture2D icon;
     bool iconLoaded = false;
@@ -12,8 +12,8 @@ private:
     int maxValue;
 
 public:
-    EnergyResource(const std::string& texturePath, int startValue = 0, int maximumValue = 1000);
-    ~EnergyResource();
+    PercentageResource(const std::string& texturePath, int startValue = 0, int maximumValue = 1000);
+    ~PercentageResource();
 
     void Draw(const Rectangle& area) const override;
     int GetValue() const override { return currentValue; }

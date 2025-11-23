@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "Room.h"
 #include "Resource.h"
-#include "EnergyResource.h"
+#include "PercentageResource.h"
 #include <string>
 #include <vector>
 #include <memory>

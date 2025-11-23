@@ -1,9 +1,9 @@
-#include "EnergyResource.h"
+#include "PercentageResource.h"
 #include <stdexcept>
 #include <sstream>
 #include <iomanip>
 
-EnergyResource::EnergyResource(const std::string& texturePath, int startValue, int maximumValue) 
+PercentageResource::PercentageResource(const std::string& texturePath, int startValue, int maximumValue) 
     : currentValue(startValue), maxValue(maximumValue) {
     
     if (!texturePath.empty()) {
@@ -12,13 +12,13 @@ EnergyResource::EnergyResource(const std::string& texturePath, int startValue, i
     }
 }
 
-EnergyResource::~EnergyResource() {
+PercentageResource::~PercentageResource() {
     if (iconLoaded) {
         UnloadTexture(icon);
     }
 }
 
-void EnergyResource::Draw(const Rectangle& area) const {
+void PercentageResource::Draw(const Rectangle& area) const {
     if (!iconLoaded) return;
     
     float scale = std::min(area.width / icon.width, area.height / icon.height) * 0.7f;
@@ -30,21 +30,21 @@ void EnergyResource::Draw(const Rectangle& area) const {
     DrawTextureEx(icon, {iconX, iconY}, 0.0f, scale, WHITE);
 }
 
-void EnergyResource::SetValue(int newValue) {
+void PercentageResource::SetValue(int newValue) {
     if (newValue < 0) {
         throw std::invalid_argument("Energy value cannot be negative");
     }
     currentValue = (newValue > maxValue) ? maxValue : newValue;
 }
 
-std::string EnergyResource::GetDisplayText() const {
+std::string PercentageResource::GetDisplayText() const {
     std::ostringstream text;
     text << currentValue << "/" << maxValue << " " << "Вт" << " (" 
          << std::fixed << std::setprecision(1) << (GetPercentage() * 100) << "%)";
     return text.str();
 }
 
-bool EnergyResource::Add(int value) {
+bool PercentageResource::Add(int value) {
     if (value < 0) {
         throw std::invalid_argument("Cannot add negative value");
     }
@@ -58,7 +58,7 @@ bool EnergyResource::Add(int value) {
     return true;
 }
 
-bool EnergyResource::Subtract(int value) {
+bool PercentageResource::Subtract(int value) {
     if (value < 0) {
         throw std::invalid_argument("Cannot subtract negative value");
     }
@@ -70,7 +70,7 @@ bool EnergyResource::Subtract(int value) {
     return false;
 }
 
-void EnergyResource::SetMaxValue(int newMaxValue) {
+void PercentageResource::SetMaxValue(int newMaxValue) {
     if (newMaxValue <= 0) {
         throw std::invalid_argument("Max value must be positive");
     }

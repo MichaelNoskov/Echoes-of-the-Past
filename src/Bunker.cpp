@@ -3,7 +3,7 @@
 #include <algorithm>
 
 Bunker::Bunker(int startEnergy, Game* gameRef) : game(gameRef) {
-    resources.push_back(std::make_unique<EnergyResource>("res/textures/resources/energy.png", startEnergy, startEnergy));
+    resources.push_back(std::make_unique<PercentageResource>("res/textures/resources/energy.png", startEnergy, startEnergy));
 }
 
 Bunker::~Bunker() {
@@ -86,9 +86,9 @@ void Bunker::Update() {
                 }
             }
             if (lightCount > 0) {
-                Resource* energyResource = GetResource("Energy");
-                if (energyResource) {
-                    energyResource->SetValue(energyResource->GetValue() - lightCount);
+                Resource* PercentageResource = GetResource("Energy");
+                if (PercentageResource) {
+                    PercentageResource->SetValue(PercentageResource->GetValue() - lightCount);
                 }
             }
         }
