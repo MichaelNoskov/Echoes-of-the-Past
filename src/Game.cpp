@@ -37,11 +37,11 @@ Game::Game(int startDay) : day(startDay) {
     curentBunker->AddRoom(std::move(room));
     curentBunker->AddRoom(std::move(room2));
 
-    AddResource("Energy", "res/textures/resources/energy.png", "units", 3000);
+    // Убрать AddResource для Energy, так как он теперь в бункере
 }
 
 Game::Game(int startDay, Bunker& bunker) : day(startDay), curentBunker(&bunker) {
-    AddResource("Energy", "res/textures/resources/energy.png", "units", 3000);
+    // Убрать AddResource для Energy, так как он теперь в бункере
 }
 
 Game::~Game() {}
@@ -108,11 +108,32 @@ void Game::SetResourceAmount(const std::string& name, int amount) {
     if (Resource* resource = GetResource(name)) resource->SetAmount(amount);
 }
 
+std::vector<Resource*> Game::GetAllResources() const {
+    std::vector<Resource*> allResources;
+    
+    // Добавить ресурсы игры
+    for (const auto& resource : resources) {
+        allResources.push_back(resource.get());
+    }
+    
+    // Добавить ресурсы бункера
+    if (curentBunker) {
+        for (const auto& resource : curentBunker->GetResources()) {
+            allResources.push_back(resource.get());
+        }
+    }
+    
+    return allResources;
+}
+
 Resource* Game::GetResourceAtMousePosition() {
     Vector2 mousePos = GetMousePosition();
     Rectangle resourcesArea = GetResourcesArea();
     
     if (!CheckCollisionPointRec(mousePos, resourcesArea)) return nullptr;
+
+    std::vector<Resource*> allResources = GetAllResources();
+    if (allResources.empty()) return nullptr;
 
     const float iconSize = 160.0f;
     const float spacing = 30.0f;
@@ -121,7 +142,10 @@ Resource* Game::GetResourceAtMousePosition() {
     float startX = resourcesArea.x;
     float startY = resourcesArea.y;
     
-    for (size_t i = 0; i < resources.size(); ++i) {
+    for (size_t i = 0; i < allResources.size(); ++i) {
+        Resource* resource = allResources[i];
+        if (!resource->IsIconLoaded()) continue;
+
         int row = i / maxColumns;
         int col = i % maxColumns;
         
@@ -136,7 +160,7 @@ Resource* Game::GetResourceAtMousePosition() {
         };
         
         if (CheckCollisionPointRec(mousePos, iconRect)) {
-            return resources[i].get();
+            return resource;
         }
     }
     
@@ -144,7 +168,8 @@ Resource* Game::GetResourceAtMousePosition() {
 }
 
 void Game::DrawResources() {
-    if (resources.empty()) return;
+    std::vector<Resource*> allResources = GetAllResources();
+    if (allResources.empty()) return;
 
     Rectangle area = GetResourcesArea();
     const float iconSize = 160.0f;
@@ -153,7 +178,7 @@ void Game::DrawResources() {
     const int textPadding = -8;
     
     const int maxColumns = CalculateOptimalColumns(area.width, iconSize, spacing);
-    const int rows = (resources.size() + maxColumns - 1) / maxColumns;
+    const int rows = (allResources.size() + maxColumns - 1) / maxColumns;
     const float contentHeight = rows * iconSize + (rows - 1) * spacing;
     
     float startX = area.x;
@@ -161,8 +186,8 @@ void Game::DrawResources() {
     
     // DrawRectangleLinesEx(area, 2, WHITE);
     
-    for (size_t i = 0; i < resources.size(); ++i) {
-        const auto& resource = resources[i];
+    for (size_t i = 0; i < allResources.size(); ++i) {
+        Resource* resource = allResources[i];
         if (!resource->IsIconLoaded()) continue;
 
         int row = i / maxColumns;
@@ -234,6 +259,11 @@ Rectangle Game::GetResourcesArea() const {
 }
 
 int Game::CalculateOptimalColumns(float availableWidth, float iconSize, float spacing) const {
+    if (availableWidth <= 0 || iconSize <= 0) return 1;
+    
+    std::vector<Resource*> allResources = GetAllResources();
+    int totalResources = allResources.size();
+    
     int maxPossibleColumns = std::max(1, static_cast<int>((availableWidth + spacing) / (iconSize + spacing)));
-    return std::min(maxPossibleColumns, static_cast<int>(resources.size()));
+    return std::min(maxPossibleColumns, totalResources);
 }

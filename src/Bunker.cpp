@@ -1,4 +1,5 @@
 #include "Bunker.h"
+#include "LightFurniture.h"
 #include <algorithm>
 
 Bunker::Bunker(int startEnergy, Game* gameRef) : game(gameRef) {
@@ -81,6 +82,26 @@ void Bunker::Update() {
     }
 
     currentRoom->Update();
+
+    for (const auto& room : roomList) {
+        if (room && room->AreLightsOn()) {
+            std::vector<std::string> furnitureNames = room->GetFurnitureNames();
+            
+            int lightCount = 0;
+            for (const auto& name : furnitureNames) {
+                Furniture* furniture = room->GetFurniture(name);
+                if (furniture) {
+                    LightFurniture* lightFurniture = dynamic_cast<LightFurniture*>(furniture);
+                    if (lightFurniture) {
+                        lightCount++;
+                    }
+                }
+            }
+            if (lightCount > 0) {
+                SubtractFromResource("Energy", lightCount);
+            }
+        }
+    }
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
         currentRoom->ToggleFlashLight();
