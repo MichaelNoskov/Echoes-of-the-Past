@@ -4,27 +4,16 @@
 #include "raylib.h"
 #include <string>
 
-class Resource {
-private:
-    std::string name;
-    std::string unit;
-    int amount;
-    Texture2D icon;
-    bool iconLoaded;
+struct Resource {
+    virtual ~Resource() = default;
 
-public:
-    Resource(const std::string& resourceName, const std::string& texturePath, const std::string& unitName = "", int startAmount = 0);
-    ~Resource();
+    virtual void Draw(const Rectangle& area) const = 0;
 
-    std::string GetName() const { return name; }
-    std::string GetUnit() const { return unit; }
-    int GetAmount() const { return amount; }
-    Texture2D GetIcon() const { return icon; }
-    bool IsIconLoaded() const { return iconLoaded; }
+    virtual int GetValue() const = 0;
 
-    void Add(int value);
-    bool Subtract(int value);
-    void SetAmount(int newAmount);
+    virtual void SetValue(int newValue) = 0;
+
+    virtual std::string GetDisplayText() const = 0;
 };
 
 #endif

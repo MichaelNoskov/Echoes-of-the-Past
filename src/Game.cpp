@@ -36,12 +36,9 @@ Game::Game(int startDay) : day(startDay) {
     
     curentBunker->AddRoom(std::move(room));
     curentBunker->AddRoom(std::move(room2));
-
-    // Убрать AddResource для Energy, так как он теперь в бункере
 }
 
 Game::Game(int startDay, Bunker& bunker) : day(startDay), curentBunker(&bunker) {
-    // Убрать AddResource для Energy, так как он теперь в бункере
 }
 
 Game::~Game() {}
@@ -84,39 +81,25 @@ void Game::AddTime(float delta) {
     }
 }
 
-void Game::AddResource(const std::string& name, const std::string& texturePath, const std::string& unit, int startAmount) {
-    resources.push_back(std::make_unique<Resource>(name, texturePath, unit, startAmount));
+void Game::AddResource(std::unique_ptr<Resource> resource) {
+    resources.push_back(std::move(resource));
 }
 
 Resource* Game::GetResource(const std::string& name) {
     auto it = std::find_if(resources.begin(), resources.end(),
-        [&name](const auto& resource) { return resource->GetName() == name; });
+        [&name](const auto& resource) { 
+            return resource->GetDisplayText().find(name) != std::string::npos; 
+        });
     return it != resources.end() ? it->get() : nullptr;
-}
-
-bool Game::AddToResource(const std::string& name, int amount) {
-    Resource* resource = GetResource(name);
-    return resource ? (resource->Add(amount), true) : false;
-}
-
-bool Game::SubtractFromResource(const std::string& name, int amount) {
-    Resource* resource = GetResource(name);
-    return resource ? resource->Subtract(amount) : false;
-}
-
-void Game::SetResourceAmount(const std::string& name, int amount) {
-    if (Resource* resource = GetResource(name)) resource->SetAmount(amount);
 }
 
 std::vector<Resource*> Game::GetAllResources() const {
     std::vector<Resource*> allResources;
-    
-    // Добавить ресурсы игры
+
     for (const auto& resource : resources) {
         allResources.push_back(resource.get());
     }
-    
-    // Добавить ресурсы бункера
+
     if (curentBunker) {
         for (const auto& resource : curentBunker->GetResources()) {
             allResources.push_back(resource.get());
@@ -144,7 +127,6 @@ Resource* Game::GetResourceAtMousePosition() {
     
     for (size_t i = 0; i < allResources.size(); ++i) {
         Resource* resource = allResources[i];
-        if (!resource->IsIconLoaded()) continue;
 
         int row = i / maxColumns;
         int col = i % maxColumns;
@@ -184,11 +166,8 @@ void Game::DrawResources() {
     float startX = area.x;
     float startY = area.y;
     
-    // DrawRectangleLinesEx(area, 2, WHITE);
-    
     for (size_t i = 0; i < allResources.size(); ++i) {
         Resource* resource = allResources[i];
-        if (!resource->IsIconLoaded()) continue;
 
         int row = i / maxColumns;
         int col = i % maxColumns;
@@ -201,16 +180,9 @@ void Game::DrawResources() {
         
         Rectangle iconRect = {x, y, iconSize, iconSize};
 
-        float scale = std::min(iconSize / resource->GetIcon().width, 
-                              iconSize / resource->GetIcon().height) * 0.7f;
-        float scaledWidth = resource->GetIcon().width * scale;
-        float scaledHeight = resource->GetIcon().height * scale;
-        float iconX = x + (iconSize - scaledWidth) / 2;
-        float iconY = y + (iconSize - scaledHeight) / 2;
+        resource->Draw(iconRect);
         
-        DrawTextureEx(resource->GetIcon(), {iconX, iconY}, 0.0f, scale, WHITE);
-        
-        std::string amountText = std::to_string(resource->GetAmount());
+        std::string amountText = resource->GetDisplayText();
         Vector2 textSize = MeasureTextEx(GetFontDefault(), amountText.c_str(), fontSize, 1);
         
         float textX = x + iconSize + textPadding * 0.01;
@@ -223,7 +195,7 @@ void Game::DrawResources() {
     
     if (hoveredResource) {
         Vector2 mousePos = GetMousePosition();
-        std::string tooltipText = hoveredResource->GetName() + " (" + hoveredResource->GetUnit() + ")";
+        std::string tooltipText = hoveredResource->GetDisplayText();
         
         int padding = 8;
         Vector2 textSize = MeasureTextEx(GetFontDefault(), tooltipText.c_str(), fontSize, 1);

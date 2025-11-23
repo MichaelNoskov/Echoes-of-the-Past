@@ -2,11 +2,12 @@
 #define BUNKER_H
 
 #include "raylib.h"
-#include <Room.h>
+#include "Room.h"
+#include "Resource.h"
+#include "EnergyResource.h"
 #include <string>
 #include <vector>
 #include <memory>
-#include "Resource.h"
 
 class Game;
 
@@ -31,11 +32,8 @@ public:
     bool GoToNextRoom();
     bool GoToPreviousRoom();
 
-    void AddResource(const std::string& name, const std::string& texturePath, const std::string& unit = "", int startAmount = 0);
+    void AddResource(std::unique_ptr<Resource> resource);
     Resource* GetResource(const std::string& name);
-    bool AddToResource(const std::string& name, int amount);
-    bool SubtractFromResource(const std::string& name, int amount);
-    void SetResourceAmount(const std::string& name, int amount);
     const std::vector<std::unique_ptr<Resource>>& GetResources() const { return resources; }
 
     void Update();

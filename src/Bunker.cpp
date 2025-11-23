@@ -3,7 +3,7 @@
 #include <algorithm>
 
 Bunker::Bunker(int startEnergy, Game* gameRef) : game(gameRef) {
-    AddResource("Energy", "res/textures/resources/energy.png", "Вт", startEnergy);
+    resources.push_back(std::make_unique<EnergyResource>("res/textures/resources/energy.png", startEnergy, startEnergy));
 }
 
 Bunker::~Bunker() {
@@ -51,28 +51,16 @@ bool Bunker::GoToPreviousRoom() {
     return false;
 }
 
-void Bunker::AddResource(const std::string& name, const std::string& texturePath, const std::string& unit, int startAmount) {
-    resources.push_back(std::make_unique<Resource>(name, texturePath, unit, startAmount));
+void Bunker::AddResource(std::unique_ptr<Resource> resource) {
+    resources.push_back(std::move(resource));
 }
 
 Resource* Bunker::GetResource(const std::string& name) {
     auto it = std::find_if(resources.begin(), resources.end(),
-        [&name](const auto& resource) { return resource->GetName() == name; });
+        [&name](const auto& resource) { 
+            return resource->GetDisplayText().find(name) != std::string::npos; 
+        });
     return it != resources.end() ? it->get() : nullptr;
-}
-
-bool Bunker::AddToResource(const std::string& name, int amount) {
-    Resource* resource = GetResource(name);
-    return resource ? (resource->Add(amount), true) : false;
-}
-
-bool Bunker::SubtractFromResource(const std::string& name, int amount) {
-    Resource* resource = GetResource(name);
-    return resource ? resource->Subtract(amount) : false;
-}
-
-void Bunker::SetResourceAmount(const std::string& name, int amount) {
-    if (Resource* resource = GetResource(name)) resource->SetAmount(amount);
 }
 
 void Bunker::Update() {
@@ -98,7 +86,10 @@ void Bunker::Update() {
                 }
             }
             if (lightCount > 0) {
-                SubtractFromResource("Energy", lightCount);
+                Resource* energyResource = GetResource("Energy");
+                if (energyResource) {
+                    energyResource->SetValue(energyResource->GetValue() - lightCount);
+                }
             }
         }
     }

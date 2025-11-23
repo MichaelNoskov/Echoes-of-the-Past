@@ -30,12 +30,8 @@ public:
     std::string GetTimeString() const;
     void AddTime(float delta);
 
-    void AddResource(const std::string& name, const std::string& texturePath, const std::string& unit = "", int startAmount = 0);
+    void AddResource(std::unique_ptr<Resource> resource);
     Resource* GetResource(const std::string& name);
-    bool AddToResource(const std::string& name, int amount);
-    bool SubtractFromResource(const std::string& name, int amount);
-    void SetResourceAmount(const std::string& name, int amount);
-
     std::vector<Resource*> GetAllResources() const;
     
     int CalculateOptimalColumns(float availableWidth, float iconSize, float spacing) const;
