@@ -9,10 +9,10 @@ struct Resource {
 
     virtual std::string GetName() const = 0;
     virtual void Draw(const Rectangle& area) const = 0;
-    virtual int GetValue() const = 0;
-    virtual void SetValue(int newValue) = 0;
-    virtual void Add(int value) = 0;
-    virtual void Subtract(int value) = 0;
+    virtual float GetValue() const = 0;
+    virtual void SetValue(float newValue) = 0;
+    virtual void Add(float value) = 0;
+    virtual void Subtract(float value) = 0;
     virtual std::string GetDisplayText() const = 0;
 };
 

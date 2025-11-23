@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iomanip>
 
-PercentageResource::PercentageResource(const std::string& resourceName, const std::string& texturePath, int startValue, int maximumValue) 
+PercentageResource::PercentageResource(const std::string& resourceName, const std::string& texturePath, float startValue, float maximumValue) 
     : name(resourceName), currentValue(startValue), maxValue(maximumValue) {
     
     if (!texturePath.empty()) {
@@ -25,7 +25,7 @@ void PercentageResource::Draw(const Rectangle& area) const {
     DrawTextureEx(icon, {iconX, iconY}, 0.0f, scale, WHITE);
 }
 
-void PercentageResource::SetValue(int newValue) {
+void PercentageResource::SetValue(float newValue) {
     if (newValue < 0) {
         throw std::invalid_argument("Energy value cannot be negative");
     }
@@ -38,7 +38,7 @@ std::string PercentageResource::GetDisplayText() const {
     return text.str();
 }
 
-void PercentageResource::Add(int value) {
+void PercentageResource::Add(float value) {
     if (value < 0) {
         throw std::invalid_argument("Cannot add negative value");
     }
@@ -50,7 +50,7 @@ void PercentageResource::Add(int value) {
     currentValue += value;
 }
 
-void PercentageResource::Subtract(int value) {
+void PercentageResource::Subtract(float value) {
     if (value < 0) {
         throw std::invalid_argument("Cannot subtract negative value");
     }
@@ -60,7 +60,7 @@ void PercentageResource::Subtract(int value) {
     }
 }
 
-void PercentageResource::SetMaxValue(int newMaxValue) {
+void PercentageResource::SetMaxValue(float newMaxValue) {
     if (newMaxValue <= 0) {
         throw std::invalid_argument("Max value must be positive");
     }
