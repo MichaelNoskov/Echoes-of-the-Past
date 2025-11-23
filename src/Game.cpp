@@ -175,7 +175,7 @@ void Game::DrawResources() {
     const float iconSize = 160.0f;
     const float spacing = 30.0f;
     const int fontSize = 40;
-    const int textPadding = -8;
+    const int textPadding = 8;
     
     const int maxColumns = CalculateOptimalColumns(area.width, iconSize, spacing);
     const int rows = (allResources.size() + maxColumns - 1) / maxColumns;
@@ -213,7 +213,7 @@ void Game::DrawResources() {
         std::string amountText = std::to_string(resource->GetAmount());
         Vector2 textSize = MeasureTextEx(GetFontDefault(), amountText.c_str(), fontSize, 1);
         
-        float textX = x + iconSize - textSize.x - textPadding;
+        float textX = x + iconSize + textPadding * 0.01;
         float textY = y + iconSize - textSize.y - textPadding;
         textX = std::max(textX, x + textPadding);
         textY = std::max(textY, y + textPadding);
