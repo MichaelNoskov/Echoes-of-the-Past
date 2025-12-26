@@ -28,5 +28,6 @@ void BunkerDoor::Update(bool interact) {
 
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
         Toggle();
+        Furniture::getRoom()->GetBunker()->GetGame()->StartRandomDialogue();
     }
 }

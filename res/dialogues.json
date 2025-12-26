@@ -1,0 +1,328 @@
+{
+  "dialogues": [
+    {
+      "name": "scavenger_encounter_1",
+      "dialogue_tree": {
+        "start": {
+          "text": "Слышал, у тебя тут свет есть. Дай подзарядиться, а то фонарь сел.",
+          "options": [
+            {
+              "text": "Ладно, на пару минут.",
+              "mood_change": 0,
+              "next": "share_power"
+            },
+            {
+              "text": "У самого еле хватает.",
+              "mood_change": -5,
+              "next": "refuse_angry"
+            },
+            {
+              "text": "А что дашь взамен?",
+              "mood_change": 2,
+              "next": "bargain"
+            }
+          ]
+        },
+        "share_power": {
+          "text": "Спасибо, друг. Вот, держи патрон на удачу. Заряжусь и уйду.",
+          "options": [
+            {
+              "text": "Береги себя.",
+              "mood_change": 3,
+              "next": "end_positive"
+            }
+          ]
+        },
+        "refuse_angry": {
+          "text": "Жадина! Тогда я сам возьму! *выдергивает кабель*",
+          "options": [],
+          "special_effect": "lose_power"
+        },
+        "bargain": {
+          "text": "Есть очищенная вода. Литр за полчаса заряда.",
+          "options": [
+            {
+              "text": "Идет.",
+              "mood_change": 5,
+              "next": "fair_trade"
+            },
+            {
+              "text": "Слишком дорого.",
+              "mood_change": -3,
+              "next": "refuse_angry"
+            }
+          ]
+        },
+        "fair_trade": {
+          "text": "Деловой! *подключается* Держи воду.",
+          "options": [],
+          "special_effect": "gain_small_power"
+        },
+        "end_positive": {
+          "text": "Удачи в этом аду. *уходит*",
+          "options": []
+        }
+      }
+    },
+    {
+      "name": "raiders_demand",
+      "dialogue_tree": {
+        "start": {
+          "text": "Эй, в бункере! Видим свет в вентиляции. Отдай половину энергии, или выбьем дверь.",
+          "options": [
+            {
+              "text": "Хорошо, не стреляйте. Беру что нужно и уходите.",
+              "mood_change": -10,
+              "next": "comply"
+            },
+            {
+              "text": "Попробуйте. Дверь бронированная.",
+              "mood_change": -15,
+              "next": "threaten"
+            },
+            {
+              "text": "У меня почти ничего нет, возьмите этот аккумулятор.",
+              "mood_change": -8,
+              "next": "partial_sacrifice"
+            }
+          ]
+        },
+        "comply": {
+          "text": "Умно. *подсоединяют устройство* Ладно, живёшь. Но в следующий раз заберём всё.",
+          "options": [],
+          "special_effect": "lose_half_power"
+        },
+        "threaten": {
+          "text": "Глупая ошибка. *раздаётся гул дрели* Генератор теперь наш.",
+          "options": [],
+          "special_effect": "lose_all_power"
+        },
+        "partial_sacrifice": {
+          "text": "Хех, сойдет. Но в следующий раз принесём больше людей.",
+          "options": [],
+          "special_effect": "lose_small_power"
+        }
+      }
+    },
+    {
+      "name": "desperate_family",
+      "dialogue_tree": {
+        "start": {
+          "text": "Пожалуйста... У ребенка температура. Нужно подзарядить грелку. Помогите.",
+          "options": [
+            {
+              "text": "Заходите, у камина погрейтесь. Подключите грелку.",
+              "mood_change": 7,
+              "next": "kind_help"
+            },
+            {
+              "text": "Не могу, сам на пределе.",
+              "mood_change": -12,
+              "next": "heartless_refusal"
+            },
+            {
+              "text": "Только на час, и чтобы без лишнего шума.",
+              "mood_change": 0,
+              "next": "cautious_help"
+            }
+          ]
+        },
+        "kind_help": {
+          "text": "Спасибо! Вы нас спасаете. Вот, возьмите наши последние батарейки в знак благодарности.",
+          "options": [],
+          "special_effect": "gain_small_power"
+        },
+        "heartless_refusal": {
+          "text": "Монстр! Если мой ребенок... Мы запомним это! *в ярости дёргает случайный провод*",
+          "options": [],
+          "special_effect": "lose_power"
+        },
+        "cautious_help": {
+          "text": "Обещаем. Спасибо. *тихо подзаряжаются и уходят, оставив немного топлива для генератора*",
+          "options": [],
+          "special_effect": "gain_small_power"
+        }
+      }
+    },
+    {
+      "name": "technician_offer",
+      "dialogue_tree": {
+        "start": {
+          "text": "Я вижу, твой генератор шумит неправильно. Дай гляну, починю. Взамен могу поднять его КПД.",
+          "options": [
+            {
+              "text": "Ладно, делай. Но если что - отвечаешь.",
+              "mood_change": 2,
+              "next": "allow_repair"
+            },
+            {
+              "text": "Уходи. Не доверяю незнакомцам.",
+              "mood_change": -5,
+              "next": "distrust"
+            },
+            {
+              "text": "Сколько это будет стоить?",
+              "mood_change": 0,
+              "next": "negotiate"
+            }
+          ]
+        },
+        "allow_repair": {
+          "text": "*покопался в механизме* Вот, заменил изношенную деталь. Теперь эффективнее на 15%. А эту старую забираю для запчастей.",
+          "options": [],
+          "special_effect": "gain_moderate_power"
+        },
+        "distrust": {
+          "text": "Твоё дело. Но знай, что без моей помощи он скоро встанет. *уходя, незаметно ослабляет соединение*",
+          "options": [],
+          "special_effect": "lose_power_gradual"
+        },
+        "negotiate": {
+          "text": "Бесплатно. Но забираю старый стабилизатор. Он мне нужнее.",
+          "options": [
+            {
+              "text": "Согласен.",
+              "mood_change": 5,
+              "next": "allow_repair"
+            },
+            {
+              "text": "Нет, это рискованно.",
+              "mood_change": -2,
+              "next": "distrust"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "mysterious_stranger",
+      "dialogue_tree": {
+        "start": {
+          "text": "Твой свет виден издалека. Это опасно. Я могу помочь его замаскировать... за небольшую плату энергией.",
+          "options": [
+            {
+              "text": "Что ты предлагаешь?",
+              "mood_change": 0,
+              "next": "hear_offer"
+            },
+            {
+              "text": "Меня и так всё устраивает. Уходи.",
+              "mood_change": -7,
+              "next": "arrogant_refusal"
+            },
+            {
+              "text": "Докажи сначала, что ты можешь.",
+              "mood_change": 3,
+              "next": "ask_proof"
+            }
+          ]
+        },
+        "hear_offer": {
+          "text": "Установлю подавитель излучения на сутки. Стоит 20% твоего текущего заряда.",
+          "options": [
+            {
+              "text": "Принимаю. Делай.",
+              "mood_change": -1,
+              "next": "accept_deal"
+            },
+            {
+              "text": "Слишком дорого.",
+              "mood_change": -3,
+              "next": "refuse_deal"
+            }
+          ]
+        },
+        "arrogant_refusal": {
+          "text": "Как знаешь. Но когда к тебе придут... не говори, что не предупреждал. *исчезает, оставив систему слежения, которая потребляет энергию*",
+          "options": [],
+          "special_effect": "lose_power"
+        },
+        "ask_proof": {
+          "text": "Умно. На, вот устройство на час. *подключает что-то* Видишь, показатели скачков снизились. Теперь плати.",
+          "options": [
+            {
+              "text": "Хорошо, вот твоя энергия.",
+              "mood_change": 2,
+              "next": "accept_deal"
+            },
+            {
+              "text": "Нет, теперь я знаю твой метод. Сделаю сам.",
+              "mood_change": -10,
+              "next": "betrayal"
+            }
+          ]
+        },
+        "accept_deal": {
+          "text": "Дело сделано. Тебя не видно. Возвращусь через день. *забирает энергию и уходит*",
+          "options": [],
+          "special_effect": "lose_power_for_stealth"
+        },
+        "refuse_deal": {
+          "text": "Жаль. Тогда я хотя бы возьму плату за консультацию... *быстро подключается и сливает немного энергии*",
+          "options": [],
+          "special_effect": "lose_small_power"
+        },
+        "betrayal": {
+          "text": "Вор! *Вспышка, и устройство отключается, вызвав короткое замыкание*",
+          "options": [],
+          "special_effect": "lose_power"
+        }
+      }
+    },
+    {
+      "name": "power_collector",
+      "dialogue_tree": {
+        "start": {
+          "text": "Приветствую. Я из Коммуны Инженеров. Мы собираем излишки энергии для общего хранилища. Внеси свой вклад.",
+          "options": [
+            {
+              "text": "А что я получу?",
+              "mood_change": 0,
+              "next": "ask_benefits"
+            },
+            {
+              "text": "У меня нет излишков.",
+              "mood_change": -5,
+              "next": "lie"
+            },
+            {
+              "text": "Вот, держите немного.",
+              "mood_change": 5,
+              "next": "donate"
+            }
+          ]
+        },
+        "ask_benefits": {
+          "text": "В случае кризиса ты сможешь получить энергию обратно с коэффициентом 0.8. И нашу защиту.",
+          "options": [
+            {
+              "text": "Звучит справедливо. Забирайте.",
+              "mood_change": 3,
+              "next": "donate"
+            },
+            {
+              "text": "Это грабёж. Нет.",
+              "mood_change": -8,
+              "next": "angry_refusal"
+            }
+          ]
+        },
+        "lie": {
+          "text": "*посмотрел на прибор* Ты лжёшь. За ложь - штраф. *принудительно забирает двойную порцию*",
+          "options": [],
+          "special_effect": "lose_power"
+        },
+        "donate": {
+          "text": "Благодарю. Вот твой талон на экстренное питание. До следующего месяца.",
+          "options": [],
+          "special_effect": "lose_power_for_future"
+        },
+        "angry_refusal": {
+          "text": "Тогда мы внесём тебя в чёрный список. И отключим от общей сети, если подключишься. *перед уходом ставит помехи*",
+          "options": [],
+          "special_effect": "lose_small_power"
+        }
+      }
+    }
+  ]
+}
